@@ -6,11 +6,8 @@ namespace RandevuPlus.API.Infrastructure.Data.Seeders
 {
     public class AppDbSeeder
     {
-        public static async Task SeedAsync(IServiceProvider serviceProvider)
+        public static async Task SeedAsync(AppDbContext context)
         {
-            using var scope = serviceProvider.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
             if (!context.Users.Any())
             {
                 context.Users.Add(new AppUser
