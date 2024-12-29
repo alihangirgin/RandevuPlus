@@ -13,7 +13,7 @@ namespace RandevuPlus.API.Infrastructure.Data.Seeders
 
             if (!context.Users.Any())
             {
-                context.Users.Add(new User
+                context.Users.Add(new AppUser
                 {
                     Id = TestUserConstants.TestUserId,
                     UserName = TestUserConstants.TestUserUsername,
@@ -21,7 +21,7 @@ namespace RandevuPlus.API.Infrastructure.Data.Seeders
                     NormalizedUserName = TestUserConstants.TestUserUsername.ToUpper(),
                     NormalizedEmail = TestUserConstants.TestUserEmail.ToUpper(),
                     EmailConfirmed = true,
-                    PasswordHash = new PasswordHasher<User>().HashPassword(null, TestUserConstants.TestUserPassword),
+                    PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, TestUserConstants.TestUserPassword),
                 });
                 await context.SaveChangesAsync();
             }

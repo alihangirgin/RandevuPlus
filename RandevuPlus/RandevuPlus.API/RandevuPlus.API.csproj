@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Result" Version="10.1.0" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
@@ -26,13 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\Controllers\" />
-    <Folder Include="App\Features\User\" />
+    <Folder Include="App\Features\User\Queries\" />
     <Folder Include="Infrastructure\Data\Configuration\" />
     <Folder Include="Infrastructure\UnitOfWork\" />
     <Folder Include="Infrastructure\Repositories\" />
-    <Folder Include="Infrastructure\Services\" />
-    <Folder Include="Shared\Interfaces\" />
   </ItemGroup>
 
 </Project>

@@ -17,7 +17,7 @@ builder.Services.AddOpenApi();
 var connectionString = builder.Configuration.GetConnectionString("RandevuPlusDb");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-builder.Services.AddIdentity<User, IdentityRole>(opt =>
+builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 {
     opt.User.RequireUniqueEmail = true;
 }).AddEntityFrameworkStores<AppDbContext>();
