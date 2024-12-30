@@ -12,7 +12,7 @@ namespace RandevuPlus.API.Infrastructure.Data.Seeders
             {
                 context.Users.Add(new AppUser
                 {
-                    Id = TestUserConstants.TestUserId,
+                    Id = new Guid(TestUserConstants.TestUserId),
                     UserName = TestUserConstants.TestUserUsername,
                     Email = TestUserConstants.TestUserEmail,
                     NormalizedUserName = TestUserConstants.TestUserUsername.ToUpper(),

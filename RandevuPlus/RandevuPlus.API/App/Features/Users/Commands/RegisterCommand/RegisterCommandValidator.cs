@@ -1,4 +1,4 @@
-﻿namespace RandevuPlus.API.App.Features.User.Commands.RegisterCommand
+﻿namespace RandevuPlus.API.App.Features.Users.Commands.RegisterCommand
 {
     using FluentValidation;
 
@@ -11,15 +11,15 @@
                 .MinimumLength(3).WithMessage("UsernameAtLeast3Char");
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("EmailIsRequired.") 
-                .EmailAddress().WithMessage("InvalidEmailFormat."); 
+                .NotEmpty().WithMessage("EmailIsRequired.")
+                .EmailAddress().WithMessage("InvalidEmailFormat.");
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.") 
+                .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6).WithMessage("PasswordAtLeast6Char")
-                .Matches(@"[A-Z]").WithMessage("PasswordAtLeastOneUppercaseChar") 
-                .Matches(@"[a-z]").WithMessage("PasswordAtLeastOneLowercaseChar") 
-                .Matches(@"[0-9]").WithMessage("PasswordAtLeastOneNumberChar") 
+                .Matches(@"[A-Z]").WithMessage("PasswordAtLeastOneUppercaseChar")
+                .Matches(@"[a-z]").WithMessage("PasswordAtLeastOneLowercaseChar")
+                .Matches(@"[0-9]").WithMessage("PasswordAtLeastOneNumberChar")
                 .Matches(@"[\W]").WithMessage("PasswordAtLeastOneSpecialChar"); // Özel karakter
             //TODO:check password rules config
         }

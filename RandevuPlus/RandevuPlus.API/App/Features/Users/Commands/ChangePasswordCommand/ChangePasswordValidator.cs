@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace RandevuPlus.API.App.Features.User.Commands.ChangePasswordCommand
+namespace RandevuPlus.API.App.Features.Users.Commands.ChangePasswordCommand
 {
     public class ChangePasswordValidator : AbstractValidator<ChangePasswordCommand>
     {

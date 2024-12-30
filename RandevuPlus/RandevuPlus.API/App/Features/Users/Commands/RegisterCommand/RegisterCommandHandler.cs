@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using RandevuPlus.API.Shared.Domain;
 
-namespace RandevuPlus.API.App.Features.User.Commands.RegisterCommand
+namespace RandevuPlus.API.App.Features.Users.Commands.RegisterCommand
 {
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result>
     {
@@ -19,7 +19,7 @@ namespace RandevuPlus.API.App.Features.User.Commands.RegisterCommand
             var user = new AppUser { UserName = command.Username, Email = command.Email };
             var result = await _userManager.CreateAsync(user, command.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
                 return Result.Error(result.Errors.FirstOrDefault()?.Description);
 
             return Result.Success();

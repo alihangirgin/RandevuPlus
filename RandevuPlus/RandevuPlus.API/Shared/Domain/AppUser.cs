@@ -2,7 +2,7 @@
 
 namespace RandevuPlus.API.Shared.Domain
 {
-    public class AppUser : IdentityUser
+    public class AppUser : IdentityUser<Guid>
     {
     }
 }

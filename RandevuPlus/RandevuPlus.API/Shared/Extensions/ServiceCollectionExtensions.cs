@@ -54,10 +54,13 @@ namespace RandevuPlus.API.Shared.Extensions
         public static void AddDbContext(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-            services.AddIdentity<AppUser, IdentityRole>(opt =>
+
+            services.AddIdentity<AppUser, IdentityRole<Guid>>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<AppDbContext>();
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
         }
 
         public static async Task InitializeDbContextAsync(this IApplicationBuilder app)

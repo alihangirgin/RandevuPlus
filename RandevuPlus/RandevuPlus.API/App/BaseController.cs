@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RandevuPlus.API.App.Features.User.Commands.LoginCommand;
 using System.Net.Mime;
 
 namespace RandevuPlus.API.App

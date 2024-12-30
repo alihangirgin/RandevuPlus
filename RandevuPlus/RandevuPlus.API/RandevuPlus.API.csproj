@@ -32,10 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="App\Features\User\Queries\" />
+    <Folder Include="App\Features\Instructors\Queries\GetMyInstructorQuery\" />
+    <Folder Include="App\Features\Instructors\Queries\GetInsructorQuery\" />
+    <Folder Include="App\Features\Instructors\Queries\GetInstructorsQuery\" />
+    <Folder Include="App\Features\Instructors\Queries\SearchInstructorQuery\" />
+    <Folder Include="App\Features\Users\Queries\GetMyUserQuery\" />
+    <Folder Include="App\Features\Users\Queries\GetUserQuery\" />
+    <Folder Include="App\Features\Users\Queries\GetUsersQuery\" />
+    <Folder Include="App\Features\Users\Queries\SearchUserQuery\" />
     <Folder Include="Infrastructure\Data\Configuration\" />
-    <Folder Include="Infrastructure\UnitOfWork\" />
-    <Folder Include="Infrastructure\Repositories\" />
   </ItemGroup>
 
 </Project>
