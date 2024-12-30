@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using RandevuPlus.API.Shared.Domain;
+using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorCommand
@@ -9,10 +10,12 @@ namespace RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorCo
     public class RegisterInstructorCommandHandler : IRequestHandler<RegisterInstructorCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public RegisterInstructorCommandHandler(IUnitOfWork unitOfWork)
+        public RegisterInstructorCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result> Handle(RegisterInstructorCommand command, CancellationToken cancellationToken)

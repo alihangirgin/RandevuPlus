@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Shared.Domain;
+using RandevuPlus.API.Shared.Dtos;
 using RandevuPlus.API.Shared.Interfaces.Repository;
+using System.Linq.Expressions;
 
 namespace RandevuPlus.API.Infrastructure.Repositories
 {
@@ -28,6 +30,28 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         {
             return await _dbSet.ToListAsync();
         }
+
+        public async Task<PaginatedResult<TEntity>> GetPaginatedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            int totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            return new PaginatedResult<TEntity>(items, totalCount, pageNumber, pageSize);
+        }
+
 
         public async Task<TEntity?> GetByIdAsync(Guid id, string? include = null)
         {

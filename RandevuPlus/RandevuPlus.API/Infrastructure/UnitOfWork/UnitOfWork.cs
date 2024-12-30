@@ -8,13 +8,19 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _dbContext;
+
+        private CourseRepository _courseRepository;
+        private CoursePricingTierRepository _coursePricingTierRepository;
         private InstructorRepository _instructorRepository;
-        private UserRepository _userRepository; 
+        private UserRepository _userRepository;
+
         public UnitOfWork(AppDbContext appDbContext)
         {
             _dbContext = appDbContext;
         }
 
+        public ICourseRepository Courses => _courseRepository = _courseRepository ?? new CourseRepository(_dbContext);
+        public ICoursePricingTierRepository CoursePricingTiers => _coursePricingTierRepository = _coursePricingTierRepository ?? new CoursePricingTierRepository(_dbContext);   
         public IInstructorRepository Instructors => _instructorRepository = _instructorRepository ?? new InstructorRepository(_dbContext);
         public IUserRepository Users => _userRepository = _userRepository ?? new UserRepository(_dbContext);
 

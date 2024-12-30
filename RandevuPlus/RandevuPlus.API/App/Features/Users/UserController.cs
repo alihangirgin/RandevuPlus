@@ -1,12 +1,10 @@
-﻿using Ardalis.Result;
-using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Users.Commands.ChangePasswordCommand;
 using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
 using RandevuPlus.API.App.Features.Users.Commands.RegisterCommand;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RandevuPlus.API.App.Features.Users
 {

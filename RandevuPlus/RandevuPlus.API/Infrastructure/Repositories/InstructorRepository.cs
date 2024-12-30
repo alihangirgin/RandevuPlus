@@ -1,4 +1,5 @@
-﻿using RandevuPlus.API.Infrastructure.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Interfaces.Repository;
 
@@ -8,6 +9,11 @@ namespace RandevuPlus.API.Infrastructure.Repositories
     {
         public InstructorRepository(AppDbContext dbContext) : base(dbContext)
         {
+        }
+
+        public async Task<Instructor?> GetByUserIdAsync(Guid userId)
+        {
+            return await _dbSet.FirstOrDefaultAsync(i => i.UserId == userId);   
         }
     }
 }

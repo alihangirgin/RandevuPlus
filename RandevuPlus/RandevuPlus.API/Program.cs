@@ -47,6 +47,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var connectionString = builder.Configuration.GetConnectionString("RandevuPlusDb");
 builder.Services.AddDbContext(connectionString);
