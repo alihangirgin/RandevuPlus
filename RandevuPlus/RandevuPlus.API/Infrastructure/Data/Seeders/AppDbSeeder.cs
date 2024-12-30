@@ -18,6 +18,7 @@ namespace RandevuPlus.API.Infrastructure.Data.Seeders
                     NormalizedUserName = TestUserConstants.TestUserUsername.ToUpper(),
                     NormalizedEmail = TestUserConstants.TestUserEmail.ToUpper(),
                     EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString(),
                     PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, TestUserConstants.TestUserPassword),
                 });
                 await context.SaveChangesAsync();

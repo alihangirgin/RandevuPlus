@@ -25,6 +25,7 @@ namespace RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorCo
                 NormalizedUserName = command.Username.ToUpper(),
                 NormalizedEmail = command.Email.ToUpper(),
                 EmailConfirmed = false,
+                SecurityStamp = Guid.NewGuid().ToString()
             };
             user.PasswordHash = new PasswordHasher<AppUser>().HashPassword(user, command.Password);
 

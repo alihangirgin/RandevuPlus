@@ -223,11 +223,7 @@ namespace RandevuPlus.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -248,7 +244,7 @@ namespace RandevuPlus.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Instructors");
                 });
@@ -306,13 +302,13 @@ namespace RandevuPlus.API.Migrations
 
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Instructor", b =>
                 {
-                    b.HasOne("RandevuPlus.API.Shared.Domain.AppUser", "AppUser")
+                    b.HasOne("RandevuPlus.API.Shared.Domain.AppUser", "User")
                         .WithMany()
-                        .HasForeignKey("AppUserId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AppUser");
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

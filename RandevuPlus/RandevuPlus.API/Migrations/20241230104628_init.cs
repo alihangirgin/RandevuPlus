@@ -163,8 +163,7 @@ namespace RandevuPlus.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Bio = table.Column<string>(type: "text", nullable: false),
+                    Bio = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -174,8 +173,8 @@ namespace RandevuPlus.API.Migrations
                 {
                     table.PrimaryKey("PK_Instructors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Instructors_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
+                        name: "FK_Instructors_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -219,9 +218,9 @@ namespace RandevuPlus.API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Instructors_AppUserId",
+                name: "IX_Instructors_UserId",
                 table: "Instructors",
-                column: "AppUserId");
+                column: "UserId");
         }
 
         /// <inheritdoc />

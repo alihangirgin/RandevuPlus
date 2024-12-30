@@ -3,7 +3,7 @@
     public class Instructor : Entity
     {
         public Guid UserId { get; set; } 
-        public virtual AppUser AppUser { get; set; }
+        public virtual AppUser User { get; set; }
         public string? Bio { get; set; } 
     }
 }

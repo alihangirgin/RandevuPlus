@@ -19,6 +19,7 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         public async Task<TEntity> AddAsync(TEntity entity)
         {
             entity.CreatedAt = DateTime.UtcNow; //TODO: override saveChanges
+            entity.CreatedBy = "test";
             await _dbSet.AddAsync(entity);
             return entity;
         }
