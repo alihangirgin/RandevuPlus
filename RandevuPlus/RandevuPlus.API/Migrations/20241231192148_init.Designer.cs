@@ -12,8 +12,8 @@ using RandevuPlus.API.Infrastructure.Data;
 namespace RandevuPlus.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241230200908_init-2")]
-    partial class init2
+    [Migration("20241231192148_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -220,6 +220,42 @@ namespace RandevuPlus.API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Availability", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("InstructorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SlotString")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstructorId");
+
+                    b.ToTable("Availabilities");
+                });
+
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Course", b =>
                 {
                     b.Property<Guid>("Id")
@@ -230,7 +266,7 @@ namespace RandevuPlus.API.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -248,7 +284,7 @@ namespace RandevuPlus.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
@@ -270,7 +306,7 @@ namespace RandevuPlus.API.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -282,11 +318,11 @@ namespace RandevuPlus.API.Migrations
                     b.Property<int?>("MaxHours")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MinHours")
+                    b.Property<int?>("MinHours")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
@@ -308,14 +344,14 @@ namespace RandevuPlus.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("text");
@@ -379,6 +415,17 @@ namespace RandevuPlus.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Availability", b =>
+                {
+                    b.HasOne("RandevuPlus.API.Shared.Domain.Instructor", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Course", b =>

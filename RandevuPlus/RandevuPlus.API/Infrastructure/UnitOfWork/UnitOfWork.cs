@@ -9,6 +9,7 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
     {
         private readonly AppDbContext _dbContext;
 
+        private AvailabilityRepository _availabilityRepository;
         private CourseRepository _courseRepository;
         private CoursePricingTierRepository _coursePricingTierRepository;
         private InstructorRepository _instructorRepository;
@@ -19,6 +20,7 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
             _dbContext = appDbContext;
         }
 
+        public IAvailabilityRepository Availabilities => _availabilityRepository = _availabilityRepository ?? new AvailabilityRepository(_dbContext);
         public ICourseRepository Courses => _courseRepository = _courseRepository ?? new CourseRepository(_dbContext);
         public ICoursePricingTierRepository CoursePricingTiers => _coursePricingTierRepository = _coursePricingTierRepository ?? new CoursePricingTierRepository(_dbContext);   
         public IInstructorRepository Instructors => _instructorRepository = _instructorRepository ?? new InstructorRepository(_dbContext);

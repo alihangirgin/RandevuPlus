@@ -11,9 +11,10 @@ namespace RandevuPlus.API.Infrastructure.Data
         {
 
         }
-        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Availability> Availabilities { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CoursePricingTier> CoursePricingTiers { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
