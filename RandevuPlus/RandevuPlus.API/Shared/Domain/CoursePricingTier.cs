@@ -2,7 +2,7 @@
 {
     public class CoursePricingTier : Entity
     {
-        public int MinHours { get; set; }  
+        public int? MinHours { get; set; }  
         public int? MaxHours { get; set; } 
         public decimal DiscountFee { get; set; }
         public Guid CourseId { get; set; }

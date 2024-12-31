@@ -31,7 +31,7 @@ namespace RandevuPlus.API.App.Features.Courses
         public async Task<ActionResult<GetCourseQueryResponse>> GetCourse(Guid id)
            => (await _mediator.Send(new GetCourseQuery(id))).ToActionResult(this);
 
-        [HttpPost("get-my-courses")]
+        [HttpPost("my-courses")]
         public async Task<ActionResult<List<GetCourseQueryResponse>>> GetMyCourses([FromQuery] int pageNumber, [FromQuery] int pageSize)
             => (await _mediator.Send(new GetMyCoursesQuery(pageNumber, pageSize))).ToActionResult(this);
     }
