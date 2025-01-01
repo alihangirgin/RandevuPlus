@@ -9,12 +9,13 @@ namespace RandevuPlus.API.Infrastructure.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
         }
+        public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Availability> Availabilities { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CoursePricingTier> CoursePricingTiers { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

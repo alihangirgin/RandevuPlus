@@ -27,7 +27,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers.Commands.CreateCourseP
 
             var coursePricingTier = _mapper.Map<CoursePricingTier>(command);
             await _unitOfWork.CoursePricingTiers.AddAsync(coursePricingTier);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return Result.Success();
         }
     }

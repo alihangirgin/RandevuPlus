@@ -6,6 +6,6 @@ namespace RandevuPlus.API.Shared.Interfaces.Services
 {
     public interface IUserService
     {
-        GenerateJwtTokenDto GenerateJwtToken(IdentityUser<Guid> user);
+        Task<GenerateJwtTokenDto> GenerateJwtTokenAsync(AppUser user);
     }
 }

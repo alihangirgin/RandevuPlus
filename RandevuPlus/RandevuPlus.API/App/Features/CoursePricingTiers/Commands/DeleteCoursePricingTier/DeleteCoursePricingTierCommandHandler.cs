@@ -18,7 +18,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers.Commands.DeleteCourseP
 
         public async Task<Result> Handle(DeleteCoursePricingTierCommand command, CancellationToken cancellationToken)
         {
-            var coursePricingTier = await _unitOfWork.CoursePricingTiers.GetByIdAsync(command.Id, "Courses");
+            var coursePricingTier = await _unitOfWork.CoursePricingTiers.GetByIdAsync(command.Id, include: "Courses");
             if (coursePricingTier == null) return Result.Error("CoursePricingTierNotFound");
 
             var userId = _currentUserService.UserId.Value;
@@ -28,7 +28,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers.Commands.DeleteCourseP
             if (coursePricingTier.Course.InstructorId != instructor.Id) return Result.Error("Unauthorized");
 
             await _unitOfWork.Courses.DeleteAsync(command.Id);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return Result.Success();
         }
     }

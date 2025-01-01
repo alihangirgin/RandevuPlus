@@ -20,7 +20,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers.Commands.UpdateCourseP
 
         public async Task<Result> Handle(UpdateCoursePricingTierCommand command, CancellationToken cancellationToken)
         {
-            var coursePricingTier = await _unitOfWork.CoursePricingTiers.GetByIdAsync(command.Id,"Courses");
+            var coursePricingTier = await _unitOfWork.CoursePricingTiers.GetByIdAsync(command.Id, include: "Courses");
             if (coursePricingTier == null) return Result.Error("CoursePricingTierNotFound");
 
             var userId = _currentUserService.UserId.Value;
@@ -37,7 +37,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers.Commands.UpdateCourseP
 
             coursePricingTier = _mapper.Map(command, coursePricingTier);
             await _unitOfWork.CoursePricingTiers.UpdateAsync(coursePricingTier);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return Result.Success();
         }
     }

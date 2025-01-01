@@ -29,7 +29,7 @@ namespace RandevuPlus.API.App.Features.Users.Commands.LoginCommand
             AppUser? user = await _userManager.FindByNameAsync(command.Username);
             if (user == null) return Result.Error("UserNotFound");
 
-            var tokenDto = _userService.GenerateJwtToken(user);
+            var tokenDto = await _userService.GenerateJwtTokenAsync(user);
             return Result.Success(new LoginCommandResponse(tokenDto.AccessToken, tokenDto.ExpiresIn));
         }
     }

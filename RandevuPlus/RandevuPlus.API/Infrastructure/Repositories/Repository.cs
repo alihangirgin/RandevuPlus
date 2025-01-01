@@ -53,12 +53,19 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         }
 
 
-        public async Task<TEntity?> GetByIdAsync(Guid id, string? include = null)
+        public async Task<TEntity?> GetByIdAsync(Guid id, string? include = null, List<string>? includes = null)
         {
             var query = _dbSet.AsQueryable();
             if (!string.IsNullOrEmpty(include))
             {
                 query = query.Include(include);
+            }
+            if (includes != null)
+            {
+                foreach (var item in includes)
+                {
+                    query = query.Include(item);
+                }
             }
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }

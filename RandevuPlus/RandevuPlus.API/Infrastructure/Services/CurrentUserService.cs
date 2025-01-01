@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace RandevuPlus.API.Infrastructure.Services
 {
-    public class CurrentUserService : ICurrentUserService   
+    public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -23,6 +23,16 @@ namespace RandevuPlus.API.Infrastructure.Services
                 }
 
                 return null;
+            }
+        }
+        public IEnumerable<string> Roles
+        {
+            get
+            {
+                var roles = _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role)
+                    .Select(c => c.Value);
+
+                return roles ?? Enumerable.Empty<string>();
             }
         }
     }

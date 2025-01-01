@@ -17,9 +17,6 @@ namespace RandevuPlus.API.Infrastructure.Repositories
 
         public async Task<List<Availability>> GetAvailabilitiesByDateAsync(Guid instructorId, DateTime startDate, DateTime endDate)
         {
-            // Tarihleri UTC'ye dönüştür
-            startDate = startDate.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(startDate, DateTimeKind.Utc) : startDate.ToUniversalTime();
-            endDate = endDate.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(endDate, DateTimeKind.Utc) : endDate.ToUniversalTime();
             return await _dbSet.Where(x => x.InstructorId == instructorId && x.Date >= startDate && x.Date <= endDate).ToListAsync();
         }
     }

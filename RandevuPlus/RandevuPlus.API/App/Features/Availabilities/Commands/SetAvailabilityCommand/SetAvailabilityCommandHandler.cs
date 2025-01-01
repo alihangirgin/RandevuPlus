@@ -40,7 +40,7 @@ namespace RandevuPlus.API.App.Features.Availabilities.Commands.SetAvailabilityCo
                     await _unitOfWork.Availabilities.UpdateAsync(_mapper.Map(commandAvailability, availability));
                 }
             }
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return Result.Success();
         }
     }

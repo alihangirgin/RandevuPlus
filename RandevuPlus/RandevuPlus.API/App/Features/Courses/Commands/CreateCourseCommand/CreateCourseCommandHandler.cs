@@ -28,7 +28,7 @@ namespace RandevuPlus.API.App.Features.Courses.Commands.CreateCourseCommand
             Course course = _mapper.Map<Course>(command);
             course.InstructorId = instructor.Id;
             await _unitOfWork.Courses.AddAsync(course);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return Result.Success();
         }
     }

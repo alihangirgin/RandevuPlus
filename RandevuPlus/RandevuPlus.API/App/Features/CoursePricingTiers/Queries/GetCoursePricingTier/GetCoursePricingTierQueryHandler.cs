@@ -25,7 +25,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers.Queries.GetCoursePrici
             var instructor = await _unitOfWork.Instructors.GetByUserIdAsync(userId);
             if (instructor == null) return Result.Error("InstructorNotFound");
 
-            var coursePricingTier = await _unitOfWork.CoursePricingTiers.GetByIdAsync(query.Id, "Courses");
+            var coursePricingTier = await _unitOfWork.CoursePricingTiers.GetByIdAsync(query.Id, include: "Courses");
             if (coursePricingTier == null) return Result.Error("CoursePricingTierNotFound");
 
             if (coursePricingTier.Course.InstructorId != instructor.Id) return Result.Error("Unauthorized");

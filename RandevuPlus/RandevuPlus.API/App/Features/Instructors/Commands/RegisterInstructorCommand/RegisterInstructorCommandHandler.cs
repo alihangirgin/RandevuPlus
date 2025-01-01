@@ -2,40 +2,46 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using RandevuPlus.API.Shared.Domain;
-using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorCommand
 {
     public class RegisterInstructorCommandHandler : IRequestHandler<RegisterInstructorCommand, Result>
     {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICurrentUserService _currentUserService;
-
-        public RegisterInstructorCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public RegisterInstructorCommandHandler(UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IUnitOfWork unitOfWork)
         {
+            _userManager = userManager;
+            _roleManager = roleManager;
             _unitOfWork = unitOfWork;
-            _currentUserService = currentUserService;
         }
 
         public async Task<Result> Handle(RegisterInstructorCommand command, CancellationToken cancellationToken)
         {
-            var user = new AppUser()
-            {
-                Id = Guid.NewGuid(),
-                UserName = command.Username,
-                Email = command.Email,
-                NormalizedUserName = command.Username.ToUpper(),
-                NormalizedEmail = command.Email.ToUpper(),
-                EmailConfirmed = false,
-                SecurityStamp = Guid.NewGuid().ToString()
-            };
-            user.PasswordHash = new PasswordHasher<AppUser>().HashPassword(user, command.Password);
+            await _unitOfWork.BeginTransactionAsync();
 
-            var addedUser = await _unitOfWork.Users.AddAsync(user);
-            var instructor = new Instructor() { UserId = addedUser.Id };
+            var user = new AppUser { UserName = command.Username, Email = command.Email };
+            var result = await _userManager.CreateAsync(user, command.Password);
+
+            if (!result.Succeeded)
+                return Result.Error(result.Errors.FirstOrDefault()?.Description);
+
+            var userRole = "Instructor";
+            if (!await _roleManager.RoleExistsAsync(userRole))
+            {
+                var roleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>(userRole));
+                if (!roleResult.Succeeded)
+                    return Result.Error(roleResult.Errors.FirstOrDefault()?.Description);
+            }
+            await _userManager.AddToRoleAsync(user, userRole);
+           
+            var instructor = new Instructor() { UserId = user.Id, Name = command.Username };
             await _unitOfWork.Instructors.AddAsync(instructor);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
+
+            await _unitOfWork.CommitTransactionAsync();
 
             return Result.Success();
         }

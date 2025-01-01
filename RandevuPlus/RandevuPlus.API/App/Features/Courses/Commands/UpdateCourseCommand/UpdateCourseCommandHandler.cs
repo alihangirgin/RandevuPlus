@@ -32,7 +32,7 @@ namespace RandevuPlus.API.App.Features.Courses.Commands.UpdateCourseCommand
 
             course = _mapper.Map(command, course);
             await _unitOfWork.Courses.UpdateAsync(course);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return Result.Success();
         }
     }

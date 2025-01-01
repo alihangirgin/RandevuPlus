@@ -28,7 +28,7 @@ namespace RandevuPlus.API.App.Features.Courses.Commands.DeleteCourseCommand
             if (course.InstructorId != instructor.Id) return Result.Error("Unauthorized");
 
             await _unitOfWork.Courses.DeleteAsync(command.Id);
-            await _unitOfWork.Commit(); 
+            await _unitOfWork.CommitAsync(); 
             return Result.Success();
         }
     }
