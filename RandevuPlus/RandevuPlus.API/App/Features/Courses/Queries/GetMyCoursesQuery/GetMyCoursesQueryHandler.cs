@@ -25,7 +25,7 @@ namespace RandevuPlus.API.App.Features.Courses.Queries.GetMyCoursesQuery
             var instructor = await _unitOfWork.Instructors.GetByUserIdAsync(userId);
             if (instructor == null) return Result.Error("InstructorNotFound");
 
-            var courses = await _unitOfWork.Courses.GetPaginatedAsync(query.PageNumber, query.PageNumber, filter : x=> x.InstructorId == instructor.Id, orderBy: x => x.OrderBy(y => y.CreatedAt));
+            var courses = await _unitOfWork.Courses.GetPaginatedAsync(query.PageNumber, query.PageSize, filter : x=> x.InstructorId == instructor.Id, orderBy: x => x.OrderBy(y => y.CreatedAt));
             var response = _mapper.Map<List<GetCourseQueryResponse>>(courses.Items);
             return Result<List<GetCourseQueryResponse>>.Success(response);
         }

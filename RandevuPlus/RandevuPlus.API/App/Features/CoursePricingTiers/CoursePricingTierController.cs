@@ -11,7 +11,7 @@ namespace RandevuPlus.API.App.Features.CoursePricingTiers
 {
     [Route("api/course-pricing-tiers")]
     [ApiController]
-    public class CourseController(IMediator mediator) : BaseController
+    public class CoursePricingTierController(IMediator mediator) : BaseController
     {
         private readonly IMediator _mediator = mediator;
 

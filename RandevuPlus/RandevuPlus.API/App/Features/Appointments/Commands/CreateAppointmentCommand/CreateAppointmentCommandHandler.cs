@@ -7,7 +7,7 @@ using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCommand
 {
-    public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointmentCommand, Result>
+    public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointmentCommand, Result<CreateAppointmentCommandResponse>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
@@ -17,7 +17,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result> Handle(CreateAppointmentCommand command, CancellationToken cancellationToken)
+        public async Task<Result<CreateAppointmentCommandResponse>> Handle(CreateAppointmentCommand command, CancellationToken cancellationToken)
         {
             var instructorExist = await _unitOfWork.Instructors.CheckAsync(command.InstructorId);
             if (!instructorExist) return Result.Error("InstructorNotFound");
@@ -58,7 +58,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
                 await _unitOfWork.Appointments.AddAsync(newAppointment);
             }
             await _unitOfWork.CommitAsync();
-            return Result.Success();
+            return Result<CreateAppointmentCommandResponse>.Success(new CreateAppointmentCommandResponse(purchase.Id));
         }
     }
 }

@@ -34,8 +34,6 @@
 
   <ItemGroup>
     <Folder Include="App\Features\Instructors\Commands\UpdateMyInstructorDetailCommand\" />
-    <Folder Include="App\Features\Instructors\Queries\GetInsructorQuery\" />
-    <Folder Include="App\Features\Instructors\Queries\GetInstructorsQuery\" />
     <Folder Include="App\Features\Instructors\Queries\GetMyInstructorDetailQuery\" />
     <Folder Include="App\Features\Instructors\Queries\SearchInstructorQuery\" />
     <Folder Include="App\Features\Users\Queries\GetMyUserQuery\" />

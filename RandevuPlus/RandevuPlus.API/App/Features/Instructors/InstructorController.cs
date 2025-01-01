@@ -3,6 +3,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorCommand;
+using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
+using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery;
 
 namespace RandevuPlus.API.App.Features.Instructors
 {
@@ -16,5 +18,15 @@ namespace RandevuPlus.API.App.Features.Instructors
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterInstructorCommand command)
             => (await _mediator.Send(command)).ToActionResult(this);
+
+        [ProducesResponseType(typeof(GetInstructorQueryResponse), StatusCodes.Status200OK)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetInstructorQueryResponse>> GetInstructor(Guid id)
+             => (await _mediator.Send(new GetInstructorQuery(id))).ToActionResult(this);
+
+        [ProducesResponseType(typeof(List<GetInstructorQueryResponse>), StatusCodes.Status200OK)]
+        [HttpGet]
+        public async Task<ActionResult<List<GetInstructorQueryResponse>>> GetInstructors([FromQuery] int? pageNumber, [FromQuery] int? pageSize, [FromQuery] Guid? instructorId, [FromQuery] string? prefix)
+     => (await _mediator.Send(new GetInstructorsQuery(pageNumber ?? 1, pageSize ?? 5, instructorId, prefix))).ToActionResult(this);
     }
 }

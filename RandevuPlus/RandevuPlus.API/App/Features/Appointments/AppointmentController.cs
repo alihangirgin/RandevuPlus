@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCommand;
+using RandevuPlus.API.App.Features.Appointments.Queries.CalculatePriceQuery;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery;
 
@@ -13,8 +14,9 @@ namespace RandevuPlus.API.App.Features.Appointments
     {
         private readonly IMediator _mediator = mediator;
 
+        [ProducesResponseType(typeof(CreateAppointmentCommandResponse), StatusCodes.Status200OK)]
         [HttpPost]
-        public async Task<ActionResult> CreateAppointment([FromBody] CreateAppointmentCommand command)
+        public async Task<ActionResult<CreateAppointmentCommandResponse>> CreateAppointment([FromBody] CreateAppointmentCommand command)
             => (await _mediator.Send(command)).ToActionResult(this);
 
         [ProducesResponseType(typeof(List<GetAppointmentQueryResponse>), StatusCodes.Status200OK)]
@@ -26,5 +28,10 @@ namespace RandevuPlus.API.App.Features.Appointments
         [HttpGet("{id}")]
         public async Task<ActionResult<GetAppointmentQueryResponse>> GetAppointment(Guid id)
              => (await _mediator.Send(new GetAppointmentQuery(id))).ToActionResult(this);
+
+        [ProducesResponseType(typeof(CalculatePriceQueryResponse), StatusCodes.Status200OK)]
+        [HttpPost("calculate-price")]
+        public async Task<ActionResult<CalculatePriceQueryResponse>> CalculatePrice([FromBody] CalculatePriceQuery query)
+            => (await _mediator.Send(query)).ToActionResult(this);
     }
 }
