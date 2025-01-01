@@ -1,6 +1,6 @@
 ﻿using RandevuPlus.API.Shared.Domain;
 
-namespace RandevuPlus.API.Shared.Interfaces.Repository
+namespace RandevuPlus.API.Shared.Interfaces.Repositories
 {
     public interface IPurchaseRepository : IRepository<Purchase>
     {

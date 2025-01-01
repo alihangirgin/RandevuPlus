@@ -12,7 +12,7 @@ using RandevuPlus.API.Infrastructure.Data;
 namespace RandevuPlus.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250101082203_init")]
+    [Migration("20250101213442_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -430,6 +430,94 @@ namespace RandevuPlus.API.Migrations
                     b.ToTable("Instructors");
                 });
 
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.InstructorReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("InstructorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<byte>("Rating")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstructorId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("InstructorReviews");
+                });
+
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRemovedFromReceiver")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRemovedFromSender")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MessageText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Message");
+                });
+
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Purchase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -551,7 +639,7 @@ namespace RandevuPlus.API.Migrations
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Availability", b =>
                 {
                     b.HasOne("RandevuPlus.API.Shared.Domain.Instructor", "Instructor")
-                        .WithMany()
+                        .WithMany("Availabilities")
                         .HasForeignKey("InstructorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -592,10 +680,29 @@ namespace RandevuPlus.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.InstructorReview", b =>
+                {
+                    b.HasOne("RandevuPlus.API.Shared.Domain.Instructor", "Instructor")
+                        .WithMany("Reviews")
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RandevuPlus.API.Shared.Domain.AppUser", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Instructor");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Purchase", b =>
                 {
                     b.HasOne("RandevuPlus.API.Shared.Domain.AppUser", "User")
-                        .WithMany()
+                        .WithMany("Purchases")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -603,9 +710,23 @@ namespace RandevuPlus.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.AppUser", b =>
+                {
+                    b.Navigation("Purchases");
+
+                    b.Navigation("Reviews");
+                });
+
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Course", b =>
                 {
                     b.Navigation("PricingTiers");
+                });
+
+            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Instructor", b =>
+                {
+                    b.Navigation("Availabilities");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Purchase", b =>

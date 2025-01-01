@@ -4,9 +4,9 @@ using RandevuPlus.API.Shared.Interfaces.Repositories;
 
 namespace RandevuPlus.API.Infrastructure.Repositories
 {
-    public class PurchaseRepository : Repository<Purchase>, IPurchaseRepository
+    public class AppointmentChangeRequestRepository : Repository<AppointmentChangeRequest>, IAppointmentChangeRequestRepository
     {
-        public PurchaseRepository(AppDbContext dbContext) : base(dbContext)
+        public AppointmentChangeRequestRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

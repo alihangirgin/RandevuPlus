@@ -1,6 +1,7 @@
-﻿using RandevuPlus.API.Infrastructure.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Shared.Domain;
-using RandevuPlus.API.Shared.Interfaces.Repository;
+using RandevuPlus.API.Shared.Interfaces.Repositories;
 
 namespace RandevuPlus.API.Infrastructure.Repositories
 {
@@ -16,6 +17,11 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         {
             await _context.Users.AddAsync(user);
             return user;
+        }
+
+        public async Task<bool> CheckAsync(Guid id)
+        {
+            return await _context.Users.AnyAsync(x => x.Id == id);
         }
     }
 }

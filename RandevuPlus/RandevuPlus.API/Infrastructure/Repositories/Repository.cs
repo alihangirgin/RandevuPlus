@@ -2,7 +2,7 @@
 using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Dtos;
-using RandevuPlus.API.Shared.Interfaces.Repository;
+using RandevuPlus.API.Shared.Interfaces.Repositories;
 using System.Linq.Expressions;
 
 namespace RandevuPlus.API.Infrastructure.Repositories
@@ -51,7 +51,6 @@ namespace RandevuPlus.API.Infrastructure.Repositories
                 .ToListAsync();
             return new PaginatedResult<TEntity>(items, totalCount, pageNumber, pageSize);
         }
-
 
         public async Task<TEntity?> GetByIdAsync(Guid id, string? include = null, List<string>? includes = null)
         {

@@ -2,7 +2,7 @@
 using RandevuPlus.API.Shared.Dtos;
 using System.Linq.Expressions;
 
-namespace RandevuPlus.API.Shared.Interfaces.Repository
+namespace RandevuPlus.API.Shared.Interfaces.Repositories
 {
     public interface IRepository<TEntity> where TEntity : Entity
     {

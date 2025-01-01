@@ -4,9 +4,9 @@ using RandevuPlus.API.Shared.Interfaces.Repositories;
 
 namespace RandevuPlus.API.Infrastructure.Repositories
 {
-    public class PurchaseRepository : Repository<Purchase>, IPurchaseRepository
+    public class InstructorReviewRepository : Repository<InstructorReview>, IInstructorReviewRepository
     {
-        public PurchaseRepository(AppDbContext dbContext) : base(dbContext)
+        public InstructorReviewRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

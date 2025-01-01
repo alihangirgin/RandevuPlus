@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Infrastructure.Repositories;
-using RandevuPlus.API.Shared.Interfaces.Repository;
+using RandevuPlus.API.Shared.Interfaces.Repositories;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.Infrastructure.UnitOfWork
@@ -12,10 +12,13 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
         private IDbContextTransaction _transaction;
 
         private AppointmentRepository _appointmentRepository;
+        private AppointmentChangeRequestRepository _appointmentChangeRequestRepository;
         private AvailabilityRepository _availabilityRepository;
         private CourseRepository _courseRepository;
         private CoursePricingTierRepository _coursePricingTierRepository;
         private InstructorRepository _instructorRepository;
+        private InstructorReviewRepository _instructorReviewRepository;
+        private MessageRepository _messageRepository;
         private PurchaseRepository _purchaseRepository;
         private UserRepository _userRepository;
 
@@ -25,10 +28,13 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
         }
 
         public IAppointmentRepository Appointments => _appointmentRepository = _appointmentRepository ?? new AppointmentRepository(_dbContext);
+        public IAppointmentChangeRequestRepository AppointmentChangeRequests => _appointmentChangeRequestRepository = _appointmentChangeRequestRepository ?? new AppointmentChangeRequestRepository(_dbContext);
         public IAvailabilityRepository Availabilities => _availabilityRepository = _availabilityRepository ?? new AvailabilityRepository(_dbContext);
         public ICourseRepository Courses => _courseRepository = _courseRepository ?? new CourseRepository(_dbContext);
         public ICoursePricingTierRepository CoursePricingTiers => _coursePricingTierRepository = _coursePricingTierRepository ?? new CoursePricingTierRepository(_dbContext);
         public IInstructorRepository Instructors => _instructorRepository = _instructorRepository ?? new InstructorRepository(_dbContext);
+        public IInstructorReviewRepository InstructorReviews => _instructorReviewRepository = _instructorReviewRepository ?? new InstructorReviewRepository(_dbContext);
+        public IMessageRepository Messages => _messageRepository = _messageRepository ?? new MessageRepository(_dbContext);
         public IPurchaseRepository Purchases => _purchaseRepository = _purchaseRepository ?? new PurchaseRepository(_dbContext);
         public IUserRepository Users => _userRepository = _userRepository ?? new UserRepository(_dbContext);
 

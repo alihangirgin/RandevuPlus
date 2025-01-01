@@ -1,10 +1,13 @@
 ﻿using RandevuPlus.API.Shared.Domain;
 
-namespace RandevuPlus.API.Shared.Interfaces.Repository
+namespace RandevuPlus.API.Shared.Interfaces.Repositories
 {
     public interface IAppointmentRepository : IRepository<Appointment>
     {
         Task<List<Appointment>> GetInstructorAppointmentsByDateAsync(Guid instructorId, DateTime startDate, DateTime endDate);
         Task<List<Appointment>> GetUserAppointmentsByDateAsync(Guid userId, DateTime startDate, DateTime endDate);
+        Task<List<Instructor>> SearchUsersAppointedInstructorsAsync(Guid userId, string prefix);
+        Task<List<AppUser>> SearchInstructorsAppointedUsersAsync(Guid instructorId, string prefix);
+        Task<bool> CheckAppointmentAsync(Guid userId, Guid instructorId);
     }
 }

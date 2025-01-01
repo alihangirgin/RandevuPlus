@@ -17,5 +17,6 @@ namespace RandevuPlus.API.Shared.Domain
         public string MeetingUrl { get; set; }
         public Guid PurchaseId { get; set; }
         public virtual Purchase Purchase { get; set; }  
+        //public virtual ICollection<AppointmentChangeRequest> ChangeRequests { get; set; }
     }
 }
