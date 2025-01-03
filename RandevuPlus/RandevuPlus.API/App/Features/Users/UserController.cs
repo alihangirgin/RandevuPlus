@@ -1,10 +1,12 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Users.Commands.ChangePasswordCommand;
 using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
 using RandevuPlus.API.App.Features.Users.Commands.RegisterCommand;
+using RandevuPlus.API.App.Features.Users.Commands.UpdateNameCommand;
 
 namespace RandevuPlus.API.App.Features.Users
 {
@@ -21,12 +23,18 @@ namespace RandevuPlus.API.App.Features.Users
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterCommand command)
-            => (await _mediator.Send(command)).ToActionResult(this);
+        public async Task<ActionResult<Result<LoginCommandResponse>>> Register([FromBody] RegisterCommand command)
+          => await _mediator.Send(command);
+
 
         [AllowAnonymous]
         [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
             => (await _mediator.Send(command)).ToActionResult(this);
+
+
+        [HttpPatch("full-name")]
+        public async Task<ActionResult<Result>> UpdateUserName([FromBody] UpdateNameCommand command)
+            => await _mediator.Send(command);
     }
 }

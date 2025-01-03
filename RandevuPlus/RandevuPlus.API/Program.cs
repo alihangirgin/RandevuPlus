@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using RandevuPlus.API.Infrastructure.Services;
@@ -9,6 +10,18 @@ using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 var builder = WebApplication.CreateBuilder(args);
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // React uygulamanýzýn çalýþtýðý adres
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
 
 
 builder.Services.AddControllers();
@@ -45,8 +58,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
-
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -57,6 +68,9 @@ builder.Services.ConfigureJwtBearer(builder.Configuration);
 builder.Services.AddFeatures();
 
 var app = builder.Build();
+
+// CORS'u kullanmaya baþlamak için
+app.UseCors("AllowLocalhost");
 
 await app.InitializeDbContextAsync();   
 

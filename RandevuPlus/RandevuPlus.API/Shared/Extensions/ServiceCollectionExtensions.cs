@@ -22,9 +22,13 @@ namespace RandevuPlus.API.Shared.Extensions
 
             services.AddSingleton(jwtOptions);
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(jwtBearerOptions =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                 .AddJwtBearer(jwtBearerOptions =>
                 {
+                    jwtBearerOptions.IncludeErrorDetails = true;
                     var signingKeyBytes = Encoding.UTF8.GetBytes(jwtOptions.SigningKey);
 
                     jwtBearerOptions.SaveToken = true;

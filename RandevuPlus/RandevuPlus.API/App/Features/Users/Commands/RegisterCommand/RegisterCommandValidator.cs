@@ -6,10 +6,6 @@
     {
         public RegisterCommandValidator()
         {
-            RuleFor(x => x.Username)
-                .NotEmpty().WithMessage("UsernameIsRequired.")
-                .MinimumLength(3).WithMessage("UsernameAtLeast3Char");
-
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("EmailIsRequired.")
                 .EmailAddress().WithMessage("InvalidEmailFormat.");

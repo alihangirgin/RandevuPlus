@@ -21,12 +21,12 @@ namespace RandevuPlus.API.App.Features.Users.Commands.LoginCommand
 
         public async Task<Result<LoginCommandResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
-            var result = await _signInManager.PasswordSignInAsync(command.Username, command.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(command.Email, command.Password, false, false);
 
             if (!result.Succeeded)
                 return Result.Unauthorized(result.ToString());
 
-            AppUser? user = await _userManager.FindByNameAsync(command.Username);
+            AppUser? user = await _userManager.FindByNameAsync(command.Email);
             if (user == null) return Result.Error("UserNotFound");
 
             var tokenDto = await _userService.GenerateJwtTokenAsync(user);

@@ -31,7 +31,9 @@ namespace RandevuPlus.API.Infrastructure.Services
                 {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Iss, "RandevuPlus"),
+                new Claim(JwtRegisteredClaimNames.Aud, "RandevuPlus")
             }
                 .Concat(roles.Select(role => new Claim(ClaimTypes.Role, role)))),
                 Expires = expiresIn,
