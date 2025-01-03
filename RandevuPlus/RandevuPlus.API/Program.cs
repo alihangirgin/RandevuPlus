@@ -56,6 +56,7 @@ builder.Services.AddSwaggerGen(c =>
             new string[] {}
         }
     });
+    c.EnableAnnotations();
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -81,6 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

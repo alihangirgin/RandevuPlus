@@ -7,6 +7,8 @@ using RandevuPlus.API.App.Features.Users.Commands.ChangePasswordCommand;
 using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
 using RandevuPlus.API.App.Features.Users.Commands.RegisterCommand;
 using RandevuPlus.API.App.Features.Users.Commands.UpdateNameCommand;
+using RandevuPlus.API.App.Features.Users.Commands.UpdateProfileCommand;
+using RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery;
 
 namespace RandevuPlus.API.App.Features.Users
 {
@@ -36,5 +38,14 @@ namespace RandevuPlus.API.App.Features.Users
         [HttpPatch("full-name")]
         public async Task<ActionResult<Result>> UpdateUserName([FromBody] UpdateNameCommand command)
             => await _mediator.Send(command);
+
+        [HttpPost("my-profile")]
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<Result>> UpdateProfile([FromForm] UpdateProfileCommand command)
+             => await _mediator.Send(command.SetUrl(Request.Scheme, Request.Host.Value ?? string.Empty));
+
+        [HttpGet("my-profile")]
+        public async Task<ActionResult<Result<GetProfileQueryResponse>>> GetProfile()
+            => await _mediator.Send(new GetProfileQuery());
     }
 }

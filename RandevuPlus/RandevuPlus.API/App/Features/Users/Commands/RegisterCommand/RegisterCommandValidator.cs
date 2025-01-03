@@ -16,7 +16,7 @@
                 .Matches(@"[A-Z]").WithMessage("PasswordAtLeastOneUppercaseChar")
                 .Matches(@"[a-z]").WithMessage("PasswordAtLeastOneLowercaseChar")
                 .Matches(@"[0-9]").WithMessage("PasswordAtLeastOneNumberChar")
-                .Matches(@"[\W]").WithMessage("PasswordAtLeastOneSpecialChar"); // Özel karakter
+                .Matches(@"[\W]").WithMessage("PasswordAtLeastOneSpecialChar"); 
             //TODO:check password rules config
         }
     }

@@ -71,7 +71,7 @@ namespace RandevuPlus.API.Shared.Extensions
         {
             using var scope = app.ApplicationServices.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            await dbContext.Database.MigrateAsync();
+                await dbContext.Database.MigrateAsync();
             await AppDbSeeder.SeedAsync(dbContext);
         }
     }
