@@ -36,7 +36,6 @@
     <Folder Include="App\Features\AppointmentChangeRequests\Commands\CreateAppointmentChangeRequestCommand\" />
     <Folder Include="App\Features\AppointmentChangeRequests\Commands\ApplyAppointmentChangeRequestCommand\" />
     <Folder Include="App\Features\AppointmentChangeRequests\Queries\GetMyAppointmentChangeRequests\" />
-    <Folder Include="App\Features\InstructorReviews\Commands\MakeReviewCommand\" />
     <Folder Include="App\Features\Instructors\Commands\UpdateMyInstructorDetailCommand\" />
     <Folder Include="App\Features\Instructors\Queries\GetMyInstructorDetailQuery\" />
     <Folder Include="App\Features\Instructors\Queries\SearchInstructorQuery\" />
