@@ -26,7 +26,8 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         public async Task<List<Instructor>> SearchUsersAppointedInstructorsAsync(Guid userId, string prefix)
         {
             return await _dbSet.Include(x => x.Instructor)
-                .Where(x => x.UserId == userId && x.Instructor.Name.Contains(prefix) && x.Status != AppointmentStatus.Draft)
+                .Where(x => x.UserId == userId && x.Status != AppointmentStatus.Draft)
+                //.Where(x => x.UserId == userId && x.Instructor.Name.Contains(prefix) && x.Status != AppointmentStatus.Draft)
                 .Select(x => x.Instructor).ToListAsync();
         }
 

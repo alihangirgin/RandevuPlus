@@ -23,10 +23,10 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
             Expression<Func<Instructor, bool>>? filterQuery = null;
             if (query.InstructorId != null && string.IsNullOrEmpty(query.Prefix))
                 filterQuery = x => x.Id == query.InstructorId;
-            else if (query.InstructorId != null && !string.IsNullOrEmpty(query.Prefix))
-                filterQuery = x => x.Id == query.InstructorId && (x.Name.Contains(query.Prefix) || (x.Bio != null && x.Bio.Contains(query.Prefix)));
-            else if (query.InstructorId == null && !string.IsNullOrEmpty(query.Prefix))
-                filterQuery = x => x.Name.Contains(query.Prefix) || (x.Bio != null && x.Bio.Contains(query.Prefix));
+            //else if (query.InstructorId != null && !string.IsNullOrEmpty(query.Prefix))
+            //    filterQuery = x => x.Id == query.InstructorId && (x.Name.Contains(query.Prefix) || (x.Bio != null && x.Bio.Contains(query.Prefix)));
+            //else if (query.InstructorId == null && !string.IsNullOrEmpty(query.Prefix))
+            //    filterQuery = x => x.Name.Contains(query.Prefix) || (x.Bio != null && x.Bio.Contains(query.Prefix));
 
             var instructors = await _unitOfWork.Instructors.GetPaginatedAsync(query.PageNumber, query.PageSize, filter: filterQuery, orderBy: x => x.OrderBy(y => y.CreatedAt));
             var response = _mapper.Map<List<GetInstructorQueryResponse>>(instructors);

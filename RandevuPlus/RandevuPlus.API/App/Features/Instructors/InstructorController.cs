@@ -1,10 +1,12 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorCommand;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery;
+using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
 
 namespace RandevuPlus.API.App.Features.Instructors
 {
@@ -16,8 +18,8 @@ namespace RandevuPlus.API.App.Features.Instructors
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterInstructorCommand command)
-            => (await _mediator.Send(command)).ToActionResult(this);
+        public async Task<ActionResult<Result<LoginCommandResponse>>> Register([FromBody] RegisterInstructorCommand command)
+            => await _mediator.Send(command);
 
         [ProducesResponseType(typeof(GetInstructorQueryResponse), StatusCodes.Status200OK)]
         [HttpGet("{id}")]
@@ -27,6 +29,6 @@ namespace RandevuPlus.API.App.Features.Instructors
         [ProducesResponseType(typeof(List<GetInstructorQueryResponse>), StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<List<GetInstructorQueryResponse>>> GetInstructors([FromQuery] int? pageNumber, [FromQuery] int? pageSize, [FromQuery] Guid? instructorId, [FromQuery] string? prefix)
-     => (await _mediator.Send(new GetInstructorsQuery(pageNumber ?? 1, pageSize ?? 5, instructorId, prefix))).ToActionResult(this);
+            => (await _mediator.Send(new GetInstructorsQuery(pageNumber ?? 1, pageSize ?? 5, instructorId, prefix))).ToActionResult(this);
     }
 }

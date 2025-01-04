@@ -9,8 +9,8 @@ namespace RandevuPlus.API.App.Features.Appointments
         public AppointmentMappingProfile()
         {
             CreateMap<Appointment, GetAppointmentQueryResponse>()
-                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name))
-                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.Name));
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name));
+                //.ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.Name));
         }
     }
 }

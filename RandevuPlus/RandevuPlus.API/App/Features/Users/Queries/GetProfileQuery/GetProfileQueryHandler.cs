@@ -25,7 +25,9 @@ namespace RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery
             var userId = _currentUserService.UserId.Value;
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null) return Result.Error("UserNotFound");
-            return Result.Success(_mapper.Map<GetProfileQueryResponse>(user));
+            var response = _mapper.Map<GetProfileQueryResponse>(user);
+            response = response with { Roles = _currentUserService.Roles.ToArray()};
+            return Result.Success(response);
         }
     }
 }
