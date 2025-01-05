@@ -21,6 +21,7 @@ namespace RandevuPlus.API.App.Features.Instructors
         public async Task<ActionResult<Result<LoginCommandResponse>>> Register([FromBody] RegisterInstructorCommand command)
             => await _mediator.Send(command);
 
+        [AllowAnonymous]
         [ProducesResponseType(typeof(GetInstructorQueryResponse), StatusCodes.Status200OK)]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetInstructorQueryResponse>> GetInstructor(Guid id)

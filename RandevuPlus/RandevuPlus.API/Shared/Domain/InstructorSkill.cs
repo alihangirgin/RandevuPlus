@@ -1,10 +1,9 @@
 ﻿namespace RandevuPlus.API.Shared.Domain
 {
-    public class Availability : Entity
+    public class InstructorSkill : Entity
     {
+        public string SkillName { get; set; }
         public Guid InstructorId { get; set; }
-        public DateTime Date { get; set; }
-        public string SlotString { get; set; }
         public virtual Instructor Instructor { get; set; }
     }
 }

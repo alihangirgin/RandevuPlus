@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RandevuPlus.API.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RandevuPlus.API.Infrastructure.Data;
 namespace RandevuPlus.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250104204102_init-12")]
+    partial class init12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,6 +339,10 @@ namespace RandevuPlus.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("InstructorId")
                         .HasColumnType("uuid");
 
@@ -442,7 +449,7 @@ namespace RandevuPlus.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("ExperienceDescription")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -462,7 +469,7 @@ namespace RandevuPlus.API.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("InstructorExperiences");
+                    b.ToTable("InstructorExperience");
                 });
 
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.InstructorReview", b =>
@@ -536,7 +543,7 @@ namespace RandevuPlus.API.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("InstructorSkills");
+                    b.ToTable("InstructorSkill");
                 });
 
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Message", b =>
@@ -718,7 +725,7 @@ namespace RandevuPlus.API.Migrations
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Course", b =>
                 {
                     b.HasOne("RandevuPlus.API.Shared.Domain.Instructor", "Instructor")
-                        .WithMany("Courses")
+                        .WithMany()
                         .HasForeignKey("InstructorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -751,7 +758,7 @@ namespace RandevuPlus.API.Migrations
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.InstructorExperience", b =>
                 {
                     b.HasOne("RandevuPlus.API.Shared.Domain.Instructor", "Instructor")
-                        .WithMany("Experiences")
+                        .WithMany("InstructorExperiences")
                         .HasForeignKey("InstructorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -816,9 +823,7 @@ namespace RandevuPlus.API.Migrations
                 {
                     b.Navigation("Availabilities");
 
-                    b.Navigation("Courses");
-
-                    b.Navigation("Experiences");
+                    b.Navigation("InstructorExperiences");
 
                     b.Navigation("Reviews");
 

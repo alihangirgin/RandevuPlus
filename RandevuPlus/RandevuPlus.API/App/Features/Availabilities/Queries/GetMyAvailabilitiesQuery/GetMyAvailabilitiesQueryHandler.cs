@@ -39,7 +39,7 @@ namespace RandevuPlus.API.App.Features.Availabilities.Queries.GetMyAvailabilitie
                     Id = Guid.NewGuid(),
                     Date = missingDate,
                     InstructorId = instructor.Id,
-                    SlotString = "000000000000000000000000"
+                    SlotString = "000000000000000000000000000000000000000000000000"
                 };
                 availabilities.Add(emptyAvailability);
             }

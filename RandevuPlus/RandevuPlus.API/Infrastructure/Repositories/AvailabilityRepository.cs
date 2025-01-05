@@ -10,6 +10,12 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         public AvailabilityRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
+
+        public async Task<List<Availability>> GetCurrentAvailabilities(Guid instructorId)
+        {
+            return await _dbSet.Where(x => x.InstructorId == instructorId).ToListAsync();
+        }
+
         public async Task<Availability?> GetAvailabilityByDateAsync(Guid instructorId, DateTime date)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.InstructorId == instructorId && x.Date.Year == date.Year && x.Date.Month == date.Month && x.Date.Day == date.Day);
