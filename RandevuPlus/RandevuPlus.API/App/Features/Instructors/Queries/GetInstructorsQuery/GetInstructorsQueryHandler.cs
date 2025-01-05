@@ -1,36 +1,108 @@
 ﻿using Ardalis.Result;
-using AutoMapper;
 using MediatR;
-using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
-using RandevuPlus.API.Shared.Domain;
-using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using RandevuPlus.API.Infrastructure.Data;
+using RandevuPlus.API.Shared.Dtos;
+using RandevuPlus.API.Shared.Enums;
 
 namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
 {
-    public class GetInstructorsQueryHandler : IRequestHandler<GetInstructorsQuery, Result<List<GetInstructorQueryResponse>>>
+    public class GetInstructorsQueryHandler : IRequestHandler<GetInstructorsQuery, Result<PaginatedResponse<GetInstructorsQueryResponse>>>
     {
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
-        public GetInstructorsQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
+        private readonly AppDbContext _context;
+
+        public GetInstructorsQueryHandler(AppDbContext context)
         {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
+            _context = context;
         }
 
-        public async Task<Result<List<GetInstructorQueryResponse>>> Handle(GetInstructorsQuery query, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedResponse<GetInstructorsQueryResponse>>> Handle(GetInstructorsQuery query, CancellationToken cancellationToken)
         {
-            Expression<Func<Instructor, bool>>? filterQuery = null;
-            if (query.InstructorId != null && string.IsNullOrEmpty(query.Prefix))
-                filterQuery = x => x.Id == query.InstructorId;
-            //else if (query.InstructorId != null && !string.IsNullOrEmpty(query.Prefix))
-            //    filterQuery = x => x.Id == query.InstructorId && (x.Name.Contains(query.Prefix) || (x.Bio != null && x.Bio.Contains(query.Prefix)));
-            //else if (query.InstructorId == null && !string.IsNullOrEmpty(query.Prefix))
-            //    filterQuery = x => x.Name.Contains(query.Prefix) || (x.Bio != null && x.Bio.Contains(query.Prefix));
+            var responseQuery = _context.Instructors
+                .Include(i => i.User)
+                .Include(i => i.Reviews)
+                .Include(i => i.Availabilities)
+                .Include(i => i.Courses)
+                .AsQueryable();
 
-            var instructors = await _unitOfWork.Instructors.GetPaginatedAsync(query.PageNumber, query.PageSize, filter: filterQuery, orderBy: x => x.OrderBy(y => y.CreatedAt));
-            var response = _mapper.Map<List<GetInstructorQueryResponse>>(instructors);
-            return Result<List<GetInstructorQueryResponse>>.Success(response);
+            // Filtreleme: Prefix User.FullName veya Instructor.Title
+            if (!string.IsNullOrEmpty(query.Prefix))
+            {
+                responseQuery = responseQuery.Where(i => i.User.FullName.Contains(query.Prefix) || (i.Title != null && i.Title.Contains(query.Prefix)));
+            }
+
+            // Filtreleme: Date ve Slotlar
+            if (query.Date.HasValue && query.SlotStartIndex.HasValue && query.SlotEndIndex.HasValue && query.SlotSize.HasValue)
+            {
+                
+                var slotPattern = new string('1', query.SlotSize.Value);
+
+                responseQuery = responseQuery.Where(i =>
+                    i.Availabilities.Any(a =>
+                        a.Date.Date == query.Date.Value.Date && // Aynı tarihte olmalı
+                        a.SlotString.Substring(query.SlotStartIndex.Value, query.SlotEndIndex.Value - query.SlotStartIndex.Value + 1).Contains(slotPattern)   
+                    )
+                );
+            }
+
+            var totalCount = await responseQuery.CountAsync(cancellationToken);  // Toplam öğe sayısını al
+            var totalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize);  // Toplam sayfa sayısını hesapla
+
+            // Sayfalama
+            responseQuery = responseQuery.Skip((query.PageNumber - 1) * query.PageSize)
+                         .Take(query.PageSize);
+
+            // OrderBy: Rating, Cheapest, Most Expensive
+            if (!string.IsNullOrEmpty(query.OrderBy))
+            {
+                switch (query.OrderBy.ToLower())
+                {
+                    case "rating":
+                        responseQuery = responseQuery.OrderByDescending(i => i.Reviews.Any() ? (byte?)i.Reviews.Average(r => r.Rating) : null);
+                        break;
+
+                    case "cheapest":
+                        responseQuery = responseQuery.OrderBy(i => i.Courses.Min(c => c.BaseFee));
+                        break;
+
+                    case "expensive":
+                        responseQuery = responseQuery.OrderByDescending(i => i.Courses.Max(c => c.BaseFee));
+                        break;
+
+                    default:
+                        responseQuery = responseQuery.OrderBy(i => i.CreatedAt);
+                        break;
+                }
+            }
+
+            // Veriyi al
+            var instructors = await responseQuery.ToListAsync(cancellationToken);
+
+            var instructorResponses = instructors.Select(i => new GetInstructorsQueryResponse(
+                i.Id,
+                i.User.PhotoUrl,
+                i.User.FullName,
+                i.Title ?? string.Empty,
+                UserStatus.Online,
+                i.Reviews.Any() ? (byte?)i.Reviews.Average(r => r.Rating) : null,
+                i.Availabilities.Any(a => a.Date.Date == DateTime.UtcNow.Date && a.SlotString.Contains("1")),
+                i.Courses.Select(c => new GetInstructorQueryCourseResponse(
+                    c.Id,
+                    c.Name,
+                    c.BaseFee
+                )).ToList()
+            )).ToList();
+
+            var response = new PaginatedResponse<GetInstructorsQueryResponse>
+            {
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                Items = instructorResponses
+            };
+
+            return Result<PaginatedResponse<GetInstructorsQueryResponse>>.Success(response);
         }
     }
 }

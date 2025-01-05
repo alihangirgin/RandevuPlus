@@ -7,6 +7,7 @@ using RandevuPlus.API.App.Features.Instructors.Commands.RegisterInstructorComman
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery;
 using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
+using RandevuPlus.API.Shared.Dtos;
 
 namespace RandevuPlus.API.App.Features.Instructors
 {
@@ -24,12 +25,13 @@ namespace RandevuPlus.API.App.Features.Instructors
         [AllowAnonymous]
         [ProducesResponseType(typeof(GetInstructorQueryResponse), StatusCodes.Status200OK)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetInstructorQueryResponse>> GetInstructor(Guid id)
-             => (await _mediator.Send(new GetInstructorQuery(id))).ToActionResult(this);
+        public async Task<ActionResult<Result<GetInstructorQueryResponse>>> GetInstructor(Guid id)
+             => await _mediator.Send(new GetInstructorQuery(id));
 
-        [ProducesResponseType(typeof(List<GetInstructorQueryResponse>), StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(PaginatedResponse<GetInstructorsQueryResponse>), StatusCodes.Status200OK)]
         [HttpGet]
-        public async Task<ActionResult<List<GetInstructorQueryResponse>>> GetInstructors([FromQuery] int? pageNumber, [FromQuery] int? pageSize, [FromQuery] Guid? instructorId, [FromQuery] string? prefix)
-            => (await _mediator.Send(new GetInstructorsQuery(pageNumber ?? 1, pageSize ?? 5, instructorId, prefix))).ToActionResult(this);
+        public async Task<ActionResult<Result<PaginatedResponse<GetInstructorsQueryResponse>>>> GetInstructors([FromQuery] int? pageNumber, [FromQuery] int? pageSize, [FromQuery] string? prefix, [FromQuery] DateTime? date, [FromQuery] int? slotStartIndex, [FromQuery] int? slotEndIndex, [FromQuery] int? slotSize, [FromQuery] string? orderBy)
+            => await _mediator.Send(new GetInstructorsQuery(pageNumber ?? 1, pageSize ?? 12, prefix, date, slotStartIndex, slotEndIndex, slotSize, true, true, orderBy));
     }
 }
