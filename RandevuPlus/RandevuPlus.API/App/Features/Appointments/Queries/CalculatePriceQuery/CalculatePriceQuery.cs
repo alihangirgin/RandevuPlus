@@ -4,5 +4,5 @@ using RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentComman
 
 namespace RandevuPlus.API.App.Features.Appointments.Queries.CalculatePriceQuery
 {
-    public sealed record CalculatePriceQuery(Guid InstructorId, Guid CourseId, List<CreateAppointmentsCommandAppointments> Appointments) : IRequest<Result<CalculatePriceQueryResponse>>;
+    public sealed record CalculatePriceQuery(Guid CourseId, int SlotSize) : IRequest<Result<CalculatePriceQueryResponse>>;
 }

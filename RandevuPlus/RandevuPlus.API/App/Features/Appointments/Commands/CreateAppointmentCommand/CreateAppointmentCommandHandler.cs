@@ -19,11 +19,8 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
 
         public async Task<Result<CreateAppointmentCommandResponse>> Handle(CreateAppointmentCommand command, CancellationToken cancellationToken)
         {
-            var instructorExist = await _unitOfWork.Instructors.CheckAsync(command.InstructorId);
-            if (!instructorExist) return Result.Error("InstructorNotFound");
-
-            var courseExist = await _unitOfWork.Courses.CheckAsync(command.CourseId);
-            if (!courseExist) return Result.Error("CourseNotFound");
+            var course = await _unitOfWork.Courses.GetByIdAsync(command.CourseId);
+            if (course == null) return Result.Error("CourseNotFound");
 
             var userId = _currentUserService.UserId.Value;
 
@@ -36,10 +33,11 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
 
             foreach (var commandAppointment in command.Appointments)
             {
-                var availability = await _unitOfWork.Availabilities.GetAvailabilityByDateAsync(command.InstructorId, commandAppointment.Date);
+                var availability = await _unitOfWork.Availabilities.GetAvailabilityByDateAsync(course.InstructorId, commandAppointment.Date);
                 if (availability == null) return Result.Error("InstructorNotAvailable");
 
-                string substring = availability.SlotString.Substring(commandAppointment.SlotStartIndex, commandAppointment.SlotEndIndex - commandAppointment.SlotStartIndex + 1);
+                var slotEndIndex = commandAppointment.SlotStartIndex + commandAppointment.SlotSize;
+                string substring = availability.SlotString.Substring(commandAppointment.SlotStartIndex, slotEndIndex - commandAppointment.SlotStartIndex + 1);
                 bool allSlotsAvailable = substring.All(x => x == '1');
                 if (!allSlotsAvailable) return Result.Error("InstructorNotAvailable");
 
@@ -48,9 +46,9 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
                     CourseId = command.CourseId,
                     Date = commandAppointment.Date,
                     MeetingUrl = "test",
-                    InstructorId = command.InstructorId,
+                    InstructorId = course.InstructorId,
                     SlotStartIndex = commandAppointment.SlotStartIndex,
-                    SlotEndIndex = commandAppointment.SlotEndIndex,
+                    SlotEndIndex = slotEndIndex,
                     Status = AppointmentStatus.Draft,
                     UserId = userId,
                     PurchaseId = purchase.Id

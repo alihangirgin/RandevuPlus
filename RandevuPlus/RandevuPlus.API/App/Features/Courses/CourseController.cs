@@ -1,10 +1,13 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Courses.Commands.CreateCourseCommand;
 using RandevuPlus.API.App.Features.Courses.Commands.DeleteCourseCommand;
 using RandevuPlus.API.App.Features.Courses.Commands.UpdateCourseCommand;
 using RandevuPlus.API.App.Features.Courses.Queries.GetCourseQuery;
+using RandevuPlus.API.App.Features.Courses.Queries.GetCoursesByInstructorIdQuery;
 using RandevuPlus.API.App.Features.Courses.Queries.GetMyCoursesQuery;
 
 namespace RandevuPlus.API.App.Features.Courses
@@ -34,5 +37,10 @@ namespace RandevuPlus.API.App.Features.Courses
         [HttpGet("my-courses")]
         public async Task<ActionResult<List<GetCourseQueryResponse>>> GetMyCourses([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
             => (await _mediator.Send(new GetMyCoursesQuery(pageNumber ?? 1, pageSize ?? 5))).ToActionResult(this);
+
+        [AllowAnonymous]
+        [HttpGet("by-instructorId/{id}")]
+        public async Task<ActionResult<Result<List<GetCourseQueryResponse>>>> GetCoursesByInstructorId(Guid id)
+            => (await _mediator.Send(new GetCoursesByInstructorIdQuery(id)));
     }
 }

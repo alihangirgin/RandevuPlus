@@ -15,17 +15,10 @@ namespace RandevuPlus.API.App.Features.Appointments.Queries.CalculatePriceQuery
 
         public async Task<Result<CalculatePriceQueryResponse>> Handle(CalculatePriceQuery query, CancellationToken cancellationToken)
         {
-            var instructorExist = await _unitOfWork.Instructors.CheckAsync(query.InstructorId);
-            if (!instructorExist) return Result.Error("InstructorNotFound");
-
-            var course = await _unitOfWork.Courses.GetByIdAsync(query.CourseId, include: "CoursePricingTiers");
+            var course = await _unitOfWork.Courses.GetByIdAsync(query.CourseId, include: "PricingTiers");
             if (course == null) return Result.Error("CourseNotFound");
 
-            int totalHour = 0;
-            foreach (var commandAppointment in query.Appointments)
-            {
-                totalHour = totalHour + (commandAppointment.SlotEndIndex - commandAppointment.SlotStartIndex);
-            }
+            decimal totalHour = (decimal)query.SlotSize * 0.5m;
 
             var discountPricingTier = course.PricingTiers
                 .FirstOrDefault(x =>
@@ -33,7 +26,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Queries.CalculatePriceQuery
                     (x.MaxHours ?? int.MaxValue) >= totalHour);
 
             decimal basePrice = totalHour * course.BaseFee;
-            decimal? discountedPrice = discountPricingTier != null ? (basePrice - discountPricingTier?.DiscountFee) : null;
+            decimal? discountedPrice = discountPricingTier != null ? basePrice - discountPricingTier.DiscountFee : (decimal?)null;
 
             return Result.Success(new CalculatePriceQueryResponse(basePrice, discountedPrice));
         }

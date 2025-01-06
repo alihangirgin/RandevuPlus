@@ -20,9 +20,8 @@ namespace RandevuPlus.API.App.Features.Users
         [AllowAnonymous]
         [ProducesResponseType(typeof(LoginCommandResponse), StatusCodes.Status200OK)]
         [HttpPost("login")]
-        public async Task<ActionResult<LoginCommandResponse>> Login([FromBody] LoginCommand command)
-            => (await _mediator.Send(command)).ToActionResult(this);
-
+        public async Task<ActionResult<Result<LoginCommandResponse>>> Login([FromBody] LoginCommand command)
+            => (await _mediator.Send(command));
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<Result<LoginCommandResponse>>> Register([FromBody] RegisterCommand command)
