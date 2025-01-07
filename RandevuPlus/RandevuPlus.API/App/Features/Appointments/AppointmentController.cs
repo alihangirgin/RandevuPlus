@@ -21,10 +21,10 @@ namespace RandevuPlus.API.App.Features.Appointments
         public async Task<ActionResult<Result<CreateAppointmentCommandResponse>>> CreateAppointment([FromBody] CreateAppointmentCommand command)
             => await _mediator.Send(command);
 
-        [ProducesResponseType(typeof(List<GetAppointmentQueryResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<List<GetAppointmentQueryResponse>>), StatusCodes.Status200OK)]
         [HttpGet("my-appointments")]
-        public async Task<ActionResult<List<GetAppointmentQueryResponse>>> GetMyAppointments([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-            => (await _mediator.Send(new GetMyAppointmentsQuery(startDate ?? DateTime.UtcNow.Date, endDate ?? DateTime.UtcNow.Date.AddDays(1).AddSeconds(-1)))).ToActionResult(this);
+        public async Task<ActionResult<Result<List<GetAppointmentQueryResponse>>>> GetMyAppointments([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+            => await _mediator.Send(new GetMyAppointmentsQuery(startDate ?? DateTime.UtcNow.Date, endDate ?? DateTime.UtcNow.Date.AddDays(1).AddSeconds(-1)));
 
         [ProducesResponseType(typeof(GetAppointmentQueryResponse), StatusCodes.Status200OK)]
         [HttpGet("{id}")]

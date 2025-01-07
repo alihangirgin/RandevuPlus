@@ -37,7 +37,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
                 if (availability == null) return Result.Error("InstructorNotAvailable");
 
                 var slotEndIndex = commandAppointment.SlotStartIndex + commandAppointment.SlotSize;
-                string substring = availability.SlotString.Substring(commandAppointment.SlotStartIndex, slotEndIndex - commandAppointment.SlotStartIndex + 1);
+                string substring = availability.SlotString.Substring(commandAppointment.SlotStartIndex, slotEndIndex - commandAppointment.SlotStartIndex);
                 bool allSlotsAvailable = substring.All(x => x == '1');
                 if (!allSlotsAvailable) return Result.Error("InstructorNotAvailable");
 

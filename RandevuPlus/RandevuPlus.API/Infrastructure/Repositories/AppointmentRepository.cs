@@ -19,7 +19,7 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         }
         public async Task<List<Appointment>> GetUserAppointmentsByDateAsync(Guid userId, DateTime startDate, DateTime endDate)
         {
-            return await _dbSet.Include(x => x.Course).Include(x => x.Instructor)
+            return await _dbSet.Include(x => x.Course).Include(x => x.User)
                 .Where(x => x.UserId == userId && x.Date >= startDate && x.Date <= endDate && x.Status != AppointmentStatus.Draft).ToListAsync();
         }
 
