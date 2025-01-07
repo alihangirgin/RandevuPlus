@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery;
+using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery;
 using RandevuPlus.API.Shared.Domain;
+using System.Globalization;
 
 namespace RandevuPlus.API.App.Features.Appointments
 {
@@ -8,15 +10,27 @@ namespace RandevuPlus.API.App.Features.Appointments
     {
         public AppointmentMappingProfile()
         {
-            CreateMap<Appointment, GetAppointmentQueryResponse>()
-                 .ForMember(dest => dest.InstructorId, opt => opt.MapFrom(src => src.InstructorId))  // InstructorId
-                 .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.User.FullName)) // InstructorName
-                 .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.CourseId))            // CourseId
-                 .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name))        // CourseName
-                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))                     // Date
-                 .ForMember(dest => dest.SlotStartIndex, opt => opt.MapFrom(src => src.SlotStartIndex))  // SlotStartIndex
-                 .ForMember(dest => dest.SlotEndIndex, opt => opt.MapFrom(src => src.SlotEndIndex))      // SlotEndIndex
+            CreateMap<Appointment, GetAppointmentsQueryResponse>()
+                 .ForMember(dest => dest.InstructorId, opt => opt.MapFrom(src => src.InstructorId))
+                 .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.User.FullName))
+                 .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.CourseId))
+                 .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name))
+                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+                 .ForMember(dest => dest.SlotStartIndex, opt => opt.MapFrom(src => src.SlotStartIndex))
+                 .ForMember(dest => dest.SlotEndIndex, opt => opt.MapFrom(src => src.SlotEndIndex))
                  .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+            CreateMap<Appointment, GetAppointmentQueryResponse>()
+                 .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name))
+                 .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.FullName))
+                 .ForMember(dest => dest.InstructorTitle, opt => opt.MapFrom(src => src.Instructor.Title))
+                 .ForMember(dest => dest.InstructorPhotoUrl, opt => opt.MapFrom(src => src.Instructor.User.PhotoUrl))
+                 .ForMember(dest => dest.UserPhotoUrl, opt => opt.MapFrom(src => src.User.PhotoUrl))
+                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                 .ForMember(dest => dest.UserTitle, opt => opt.MapFrom(src => "Öğrenci"))
+                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("d MMMM yyyy", new CultureInfo("tr-TR"))))
+                 .ForMember(dest => dest.StartHour, opt => opt.MapFrom(src => src.Date.AddHours(src.SlotStartIndex).Hour))
+                 .ForMember(dest => dest.EndHour, opt => opt.MapFrom(src => src.Date.AddHours(src.SlotEndIndex).Hour));
         }
     }
 }

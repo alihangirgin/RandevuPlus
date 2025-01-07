@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using MediatR;
+using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery;
 
 namespace RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery
 {

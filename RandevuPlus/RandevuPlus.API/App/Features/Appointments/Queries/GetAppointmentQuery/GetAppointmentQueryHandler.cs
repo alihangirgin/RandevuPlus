@@ -1,7 +1,7 @@
 ﻿using Ardalis.Result;
 using AutoMapper;
 using MediatR;
-using RandevuPlus.API.Shared.Domain;
+using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
@@ -24,7 +24,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery
         {
             var userId = _currentUserService.UserId.Value;
 
-            var appointment = await _unitOfWork.Appointments.GetByIdAsync(query.Id);
+            var appointment = await _unitOfWork.Appointments.GetByIdAsync(query.Id, includes : new List<string> { "Instructor.User", "User", "Course" });
             if (appointment == null || appointment.Status == Shared.Enums.AppointmentStatus.Draft) return Result.Error("AppointmentNotFound");
 
             var isInstructor = _currentUserService.Roles.Contains("Instructor");

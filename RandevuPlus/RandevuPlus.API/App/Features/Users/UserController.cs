@@ -27,7 +27,6 @@ namespace RandevuPlus.API.App.Features.Users
         public async Task<ActionResult<Result<LoginCommandResponse>>> Register([FromBody] RegisterCommand command)
           => await _mediator.Send(command);
 
-
         [AllowAnonymous]
         [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordCommand command)

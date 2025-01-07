@@ -45,6 +45,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
                 {
                     CourseId = command.CourseId,
                     Date = commandAppointment.Date,
+                    
                     MeetingUrl = "test",
                     InstructorId = course.InstructorId,
                     SlotStartIndex = commandAppointment.SlotStartIndex,

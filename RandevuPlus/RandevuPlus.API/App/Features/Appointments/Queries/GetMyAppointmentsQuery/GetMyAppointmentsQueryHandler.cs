@@ -1,14 +1,13 @@
 ﻿using Ardalis.Result;
 using AutoMapper;
 using MediatR;
-using RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery
 {
-    public class GetMyAppointmentsQueryHandler : IRequestHandler<GetMyAppointmentsQuery, Result<List<GetAppointmentQueryResponse>>>
+    public class GetMyAppointmentsQueryHandler : IRequestHandler<GetMyAppointmentsQuery, Result<List<GetAppointmentsQueryResponse>>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
@@ -20,7 +19,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQue
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<List<GetAppointmentQueryResponse>>> Handle(GetMyAppointmentsQuery query, CancellationToken cancellationToken)
+        public async Task<Result<List<GetAppointmentsQueryResponse>>> Handle(GetMyAppointmentsQuery query, CancellationToken cancellationToken)
         {
             var isInstructor = _currentUserService.Roles.Contains("Instructor");
             var userId = _currentUserService.UserId.Value;
@@ -38,7 +37,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQue
                 appointments = await _unitOfWork.Appointments.GetUserAppointmentsByDateAsync(userId, query.StartDate, query.EndDate);
             }
 
-            return Result.Success(_mapper.Map<List<GetAppointmentQueryResponse>>(appointments));
+            return Result.Success(_mapper.Map<List<GetAppointmentsQueryResponse>>(appointments));
         }
     }
 }
