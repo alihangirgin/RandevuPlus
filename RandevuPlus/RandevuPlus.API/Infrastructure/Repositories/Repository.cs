@@ -20,7 +20,7 @@ namespace RandevuPlus.API.Infrastructure.Repositories
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {
-            entity.CreatedAt = DateTime.UtcNow; //TODO: override saveChanges
+            entity.CreatedAt = DateTime.UtcNow.AddHours(3); //TODO: override saveChanges
             entity.CreatedBy = "test";
             await _dbSet.AddAsync(entity);
             return entity;
@@ -75,7 +75,7 @@ namespace RandevuPlus.API.Infrastructure.Repositories
             if (existingEntity == null)
                 return null;
 
-            entity.UpdatedAt = DateTime.UtcNow;  //TODO: override saveChanges
+            entity.UpdatedAt = DateTime.UtcNow.AddHours(3);  //TODO: override saveChanges
             _dbSet.Update(entity);
             return existingEntity;
         }

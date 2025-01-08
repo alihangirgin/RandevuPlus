@@ -13,7 +13,7 @@ namespace RandevuPlus.API.Infrastructure.Repositories
 
         public async Task<List<Availability>> GetCurrentAvailabilities(Guid instructorId)
         {
-            return await _dbSet.Where(x => x.InstructorId == instructorId).ToListAsync();
+            return await _dbSet.Where(x => x.InstructorId == instructorId && x.Date >= DateTime.UtcNow.AddHours(3).Date).ToListAsync();
         }
 
         public async Task<Availability?> GetAvailabilityByDateAsync(Guid instructorId, DateTime date)

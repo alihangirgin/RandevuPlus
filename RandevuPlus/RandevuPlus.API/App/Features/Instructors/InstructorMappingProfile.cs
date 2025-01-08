@@ -25,7 +25,25 @@ namespace RandevuPlus.API.App.Features.Instructors
             CreateMap<InstructorReview, GetInstructorQueryReviewResponse>();
             CreateMap<InstructorSkill, GetInstructorQuerySkillResponse>();
             CreateMap<InstructorExperience, GetInstructorQueryExperienceResponse>();
-            CreateMap<Availability, GetInstructorQueryAvailabilityResponse>();
+            CreateMap<Availability, GetInstructorQueryAvailabilityResponse>()
+            .ForMember(dest => dest.SlotString, opt => opt.MapFrom((src, dest) =>
+            {
+                // Mevcut zamanı al
+                var currentTime = DateTime.Now;
+
+                // SlotString içerisinde her zaman dilimini kontrol et ve geçmiş olanları 0 yap
+                var updatedSlotString = src.SlotString.Select((slot, index) =>
+                {
+                    // Her slot'ın zamanını hesapla (30 dakikalık dilimlerle)
+                    var slotTime = currentTime.Date.AddMinutes(index * 30); // Slot 30 dakikalık aralıklarla
+
+                    // Eğer slot zamanı geçmişse, 0 olarak değiştir
+                    return slotTime < currentTime ? '0' : slot;
+                }).ToArray();
+
+                // Güncellenmiş slot string'i döndür
+                return new string(updatedSlotString);
+            }));
         }
     }
 }

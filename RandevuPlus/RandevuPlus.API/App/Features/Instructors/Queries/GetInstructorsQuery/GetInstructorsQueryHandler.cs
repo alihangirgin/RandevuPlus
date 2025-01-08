@@ -85,7 +85,7 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
                 i.Title ?? string.Empty,
                 UserStatus.Online,
                 i.Reviews.Any() ? (byte?)i.Reviews.Average(r => r.Rating) : null,
-                i.Availabilities.Any(a => a.Date.Date == DateTime.UtcNow.Date && a.SlotString.Contains("1")),
+                i.Availabilities.Any(a => a.Date.Date == DateTime.UtcNow.AddHours(3).Date && a.SlotString.Contains("1")),
                 i.Courses.Select(c => new GetInstructorQueryCourseResponse(
                     c.Id,
                     c.Name,

@@ -24,7 +24,7 @@ namespace RandevuPlus.API.App.Features.Appointments
         [ProducesResponseType(typeof(Result<List<GetAppointmentsQueryResponse>>), StatusCodes.Status200OK)]
         [HttpGet("my-appointments")]
         public async Task<ActionResult<Result<List<GetAppointmentsQueryResponse>>>> GetMyAppointments([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-            => await _mediator.Send(new GetMyAppointmentsQuery(startDate ?? DateTime.UtcNow.Date, endDate ?? DateTime.UtcNow.Date.AddDays(1).AddSeconds(-1)));
+            => await _mediator.Send(new GetMyAppointmentsQuery(startDate ?? DateTime.UtcNow.AddHours(3).Date, endDate ?? DateTime.UtcNow.AddHours(3).Date.AddDays(1).AddSeconds(-1)));
 
         [ProducesResponseType(typeof(GetAppointmentQueryResponse), StatusCodes.Status200OK)]
         [HttpGet("{id}")]

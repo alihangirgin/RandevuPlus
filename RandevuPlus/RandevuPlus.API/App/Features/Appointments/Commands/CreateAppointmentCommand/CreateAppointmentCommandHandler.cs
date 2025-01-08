@@ -34,18 +34,22 @@ namespace RandevuPlus.API.App.Features.Appointments.Commands.CreateAppointmentCo
             foreach (var commandAppointment in command.Appointments)
             {
                 var availability = await _unitOfWork.Availabilities.GetAvailabilityByDateAsync(course.InstructorId, commandAppointment.Date);
-                if (availability == null) return Result.Error("InstructorNotAvailable");
+                if (availability == null) return Result.Error("InstructorsAvailabilityNotFound");
 
                 var slotEndIndex = commandAppointment.SlotStartIndex + commandAppointment.SlotSize;
                 string substring = availability.SlotString.Substring(commandAppointment.SlotStartIndex, slotEndIndex - commandAppointment.SlotStartIndex);
                 bool allSlotsAvailable = substring.All(x => x == '1');
                 if (!allSlotsAvailable) return Result.Error("InstructorNotAvailable");
 
+                var currentTime = DateTime.UtcNow.AddHours(3);
+                var slotStartTime = currentTime.Date.AddMinutes(commandAppointment.SlotStartIndex * 30);
+                if (slotStartTime < currentTime) return Result.Error("AppointmentStartTimeExceed");
+
                 var newAppointment = new Appointment()
                 {
                     CourseId = command.CourseId,
                     Date = commandAppointment.Date,
-                    
+
                     MeetingUrl = "test",
                     InstructorId = course.InstructorId,
                     SlotStartIndex = commandAppointment.SlotStartIndex,

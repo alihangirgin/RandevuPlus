@@ -19,6 +19,6 @@ namespace RandevuPlus.API.App.Features.Availabilities
         [ProducesResponseType(typeof(List<GetMyAvailabilityQueryResponse>), StatusCodes.Status200OK)]
         [HttpGet("my-availabilities")]
         public async Task<ActionResult<List<GetMyAvailabilityQueryResponse>>> GetMyAvailabilities([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-            => (await _mediator.Send(new GetMyAvailabilitiesQuery(startDate ?? DateTime.UtcNow.Date, endDate ?? DateTime.UtcNow.Date.AddDays(1).AddSeconds(-1)))).ToActionResult(this);
+            => (await _mediator.Send(new GetMyAvailabilitiesQuery(startDate ?? DateTime.UtcNow.AddHours(3).Date, endDate ?? DateTime.UtcNow.AddHours(3).Date.AddDays(1).AddSeconds(-1)))).ToActionResult(this);
     }
 }

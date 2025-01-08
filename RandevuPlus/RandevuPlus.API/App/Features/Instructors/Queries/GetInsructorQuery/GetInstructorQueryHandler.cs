@@ -31,9 +31,21 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery
             var response = _mapper.Map<GetInstructorQueryResponse>(instructor);
 
             var availabilities = await _unitOfWork.Availabilities.GetCurrentAvailabilities(instructor.Id);
+
+            foreach (var availability in availabilities)  //slot stringde tarihi geçen saatleri çıkartmak istiyorum, mappera koyulabilir
+            {
+                var currentTime = DateTime.UtcNow.AddHours(3);
+                var updatedSlotString = availability.SlotString.Select((slot, index) =>
+                {
+                    var slotTime = currentTime.Date.AddMinutes(index * 30);
+                    return slotTime < currentTime ? '0' : slot;
+                }).ToArray();
+                availability.SlotString = new string(updatedSlotString);
+            }
+            availabilities = availabilities.Where(a => !a.SlotString.All(c => c == '0')).ToList();
+
             var availabilitiesResponse = _mapper.Map<List<GetInstructorQueryAvailabilityResponse>>(availabilities);
             response = response with { PhotoUrl = user.PhotoUrl, Status = UserStatus.Online, Availabilities = availabilitiesResponse };
-
 
             return Result<GetInstructorQueryResponse>.Success(response);
         }

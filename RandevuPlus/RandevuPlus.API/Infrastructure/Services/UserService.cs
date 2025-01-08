@@ -21,7 +21,7 @@ namespace RandevuPlus.API.Infrastructure.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = System.Text.Encoding.UTF8.GetBytes("81beca0d490431b65b22bfa2d86a2495d2492235daee928cb8d784ce751b42a8");
-            var expiresIn = DateTime.UtcNow.AddHours(1);
+            var expiresIn = DateTime.UtcNow.AddHours(3).AddHours(1);
 
             var roles = await _userManager.GetRolesAsync(user);
 
