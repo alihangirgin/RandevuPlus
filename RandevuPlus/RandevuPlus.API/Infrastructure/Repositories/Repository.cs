@@ -18,6 +18,11 @@ namespace RandevuPlus.API.Infrastructure.Repositories
             _dbSet = _dbContext.Set<TEntity>();
         }
 
+        public IQueryable<TEntity> GetQueryable()
+        {
+            return  _dbSet.AsQueryable();
+        }
+
         public async Task<TEntity> AddAsync(TEntity entity)
         {
             entity.CreatedAt = DateTime.UtcNow.AddHours(3); //TODO: override saveChanges
@@ -31,10 +36,17 @@ namespace RandevuPlus.API.Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<PaginatedResult<TEntity>> GetPaginatedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null)
+        public async Task<PaginatedResult<TEntity>> GetPaginatedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, List<string>? includes = null)
         {
             var query = _dbSet.AsQueryable();
 
+            if (includes != null)
+            {
+                foreach (var item in includes)
+                {
+                    query = query.Include(item);
+                }
+            }
             if (filter != null)
             {
                 query = query.Where(filter);
@@ -79,6 +91,29 @@ namespace RandevuPlus.API.Infrastructure.Repositories
             _dbSet.Update(entity);
             return existingEntity;
         }
+
+        public async Task<IEnumerable<TEntity>?> UpdateRangeAsync(IEnumerable<TEntity> entities)
+        {
+            var entityIds = entities.Select(x => x.Id).ToList();
+            var existingEntities = await _dbSet.Where(x => entityIds.Contains(x.Id)).ToListAsync();
+
+            if (existingEntities.Count != entityIds.Count)
+                return null;  
+
+            foreach (var entity in entities)
+            {
+                var existingEntity = existingEntities.FirstOrDefault(x => x.Id == entity.Id);
+                if (existingEntity != null)
+                {
+                    existingEntity.UpdatedAt = DateTime.UtcNow.AddHours(3);  //TODO: override saveChanges
+                    _dbSet.Update(existingEntity);
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return existingEntities;
+        }
+
 
         public async Task DeleteAsync(Guid id)
         {

@@ -1,4 +1,5 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Messages.Commands.DeleteMessageCommand;
@@ -8,6 +9,7 @@ using RandevuPlus.API.App.Features.Messages.Queries.GetInboxQuery;
 using RandevuPlus.API.App.Features.Messages.Queries.GetMessageQuery;
 using RandevuPlus.API.App.Features.Messages.Queries.GetSendboxQuery;
 using RandevuPlus.API.App.Features.Messages.Queries.SearchFriendsQuery;
+using RandevuPlus.API.Shared.Dtos;
 
 namespace RandevuPlus.API.App.Features.Messages
 {
@@ -26,8 +28,8 @@ namespace RandevuPlus.API.App.Features.Messages
             => (await _mediator.Send(command)).ToActionResult(this);
 
         [HttpGet("inbox")]
-        public async Task<ActionResult<List<GetInboxQueryResponseItem>>> GetInbox([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-            => (await _mediator.Send(new GetInboxQuery(pageNumber ?? 1, pageSize ?? 5))).ToActionResult(this);
+        public async Task<ActionResult<Result<PaginatedResponse<GetInboxQueryResponseItem>>>> GetInbox([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+            => await _mediator.Send(new GetInboxQuery(pageNumber ?? 1, pageSize ?? 5));
 
         [HttpGet("sendbox")]
         public async Task<ActionResult<List<GetInboxQueryResponseItem>>> GetSendbox([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
@@ -37,9 +39,9 @@ namespace RandevuPlus.API.App.Features.Messages
         public async Task<ActionResult<GetInboxCountQueryResponse>> GetInboxCount()
             => (await _mediator.Send(new GetInboxCountQuery())).ToActionResult(this);
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GetMessageQueryResponse>> GetMessage(Guid id)
-            => (await _mediator.Send(new GetMessageQuery(id))).ToActionResult(this);
+        [HttpGet("{recipientId}")]
+        public async Task<ActionResult<Result<GetMessageQueryResponse>>> GetMessage(Guid recipientId, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+            => await _mediator.Send(new GetMessageQuery(recipientId, pageNumber ?? 1, pageSize ?? 5));
 
         [HttpGet("search-friends")]
         public async Task<ActionResult<List<SearchFriendsQueryResponseItem>>> SearchFriends([FromQuery] string prefix)

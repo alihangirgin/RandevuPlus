@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Interfaces.Services;
+using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery
 {
@@ -12,12 +13,14 @@ namespace RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetProfileQueryHandler(UserManager<AppUser> userManager, ICurrentUserService currentUserService, IMapper mapper)
+        public GetProfileQueryHandler(UserManager<AppUser> userManager, ICurrentUserService currentUserService, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _currentUserService = currentUserService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<GetProfileQueryResponse>> Handle(GetProfileQuery query, CancellationToken cancellationToken)
@@ -26,7 +29,8 @@ namespace RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null) return Result.Error("UserNotFound");
             var response = _mapper.Map<GetProfileQueryResponse>(user);
-            response = response with { Roles = _currentUserService.Roles.ToArray()};
+            var inboxCount = await _unitOfWork.Messages.CountInboxAsync(userId);
+            response = response with { Roles = _currentUserService.Roles.ToArray(), InboxCount = inboxCount};
             return Result.Success(response);
         }
     }
