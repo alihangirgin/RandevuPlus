@@ -21,6 +21,7 @@ namespace RandevuPlus.API.Infrastructure.Data
         public DbSet<InstructorExperience> InstructorExperiences { get; set; }
         public DbSet<InstructorSkill> InstructorSkills { get; set; }
         public DbSet<Message> Message { get; set; }
+        public DbSet<MessageReaction> MessageReactions { get; set; }
         public DbSet<Purchase> Purchases { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

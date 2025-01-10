@@ -23,5 +23,10 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         {
             return await _context.Users.AnyAsync(x => x.Id == id);
         }
+
+        public async Task<List<AppUser>> SearchUsersAsync(string prefix)
+        {
+            return await _context.Users.Where(x => x.FullName.Contains(prefix)).Take(10).ToListAsync();
+        }
     }
 }

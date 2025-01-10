@@ -6,5 +6,6 @@ namespace RandevuPlus.API.Shared.Interfaces.Repositories
     {
         Task<AppUser> AddAsync(AppUser user);
         Task<bool> CheckAsync(Guid id);
+        Task<List<AppUser>> SearchUsersAsync(string prefix);
     }
 }

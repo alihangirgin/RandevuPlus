@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RandevuPlus.API.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RandevuPlus.API.Infrastructure.Data;
 namespace RandevuPlus.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250110153449_init-21")]
+    partial class init21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -586,44 +589,6 @@ namespace RandevuPlus.API.Migrations
                     b.ToTable("Message");
                 });
 
-            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.MessageReaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("MessageId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Reaction")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ReactorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.HasIndex("ReactorId");
-
-                    b.ToTable("MessageReactions");
-                });
-
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Purchase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -846,25 +811,6 @@ namespace RandevuPlus.API.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.MessageReaction", b =>
-                {
-                    b.HasOne("RandevuPlus.API.Shared.Domain.Message", "Message")
-                        .WithMany("Reactions")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RandevuPlus.API.Shared.Domain.AppUser", "Reactor")
-                        .WithMany()
-                        .HasForeignKey("ReactorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Message");
-
-                    b.Navigation("Reactor");
-                });
-
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Purchase", b =>
                 {
                     b.HasOne("RandevuPlus.API.Shared.Domain.AppUser", "User")
@@ -899,11 +845,6 @@ namespace RandevuPlus.API.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Skills");
-                });
-
-            modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Message", b =>
-                {
-                    b.Navigation("Reactions");
                 });
 
             modelBuilder.Entity("RandevuPlus.API.Shared.Domain.Purchase", b =>

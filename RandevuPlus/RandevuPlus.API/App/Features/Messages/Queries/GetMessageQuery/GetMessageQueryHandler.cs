@@ -43,6 +43,7 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetMessageQuery
 
             var messagesQuery = _unitOfWork.Messages
                 .GetQueryable()
+                .Include(x=> x.Reactions)
                 .Where(x =>
                     (x.SenderId == userId && x.ReceiverId == query.RecipientId && !x.IsRemovedFromSender) ||
                     (x.SenderId == query.RecipientId && x.ReceiverId == userId && !x.IsRemovedFromReceiver)
@@ -65,8 +66,20 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetMessageQuery
             await _unitOfWork.CommitAsync();
 
             var responseMessages = messages
-                .Select(x => new GetMessageQueryMessageResponse(x.Id, x.MessageText, x.CreatedAt,
-                    x.SenderId == userId ? MessageType.Outgoing : MessageType.Incoming))
+                .Select(x => new GetMessageQueryMessageResponse(
+                    x.Id,
+                    x.MessageText,
+                    x.CreatedAt,
+                    x.SenderId == userId ? MessageType.Outgoing : MessageType.Incoming,
+                    x.Reactions
+                        .GroupBy(r => r.Reaction) 
+                        .Select(g => new GetMessageQueryMessageReactionResponse(
+                            g.Key,           
+                            g.Count(),      
+                            g.Any(r => r.ReactorId == userId) 
+                        ))
+                        .ToList()
+                ))
                 .ToList();
 
             var responseRecipient = new GetMessageQueryUserResponse(

@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RandevuPlus.API.Shared.Dtos;
 using RandevuPlus.API.Shared.Enums;
+using RandevuPlus.API.Shared.Extensions;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 using System.Globalization;
@@ -29,12 +30,16 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetInboxQuery
             var inboxQuery = _unitOfWork.Messages
                 .GetQueryable()
                 .Include(x => x.Sender)
-                .Where(x => x.ReceiverId == userId && !x.IsRemovedFromReceiver)
-                .GroupBy(x => x.SenderId)
+                .Include(x=> x.Receiver)
+                .Where(x =>
+                    (x.SenderId == userId  && !x.IsRemovedFromSender) ||
+                    (x.ReceiverId == userId && !x.IsRemovedFromReceiver)
+                )
+                .GroupBy(x => x.SenderId == userId ? x.ReceiverId : x.SenderId)
                 .Select(y => new
                 {
                     LastMessage = y.OrderByDescending(x => x.CreatedAt).FirstOrDefault(),
-                    UnreadCount = y.Count(x => !x.IsRead)
+                    UnreadCount = y.Count(x => !x.IsRead && x.ReceiverId == userId)
                 });
 
 
@@ -49,11 +54,11 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetInboxQuery
             .Select(x => new GetInboxQueryResponseItem
             {
                 Id = x.LastMessage.Id,
-                SenderId = x.LastMessage.SenderId,
-                SenderName = x.LastMessage.Sender.FullName,
+                SenderId = x.LastMessage.SenderId == userId ? x.LastMessage.ReceiverId : x.LastMessage.SenderId,
+                SenderName = x.LastMessage.SenderId == userId ? x.LastMessage.Receiver.FullName : x.LastMessage.Sender.FullName,
                 IsRead = x.LastMessage.IsRead,
                 LastMessageDate = x.LastMessage.CreatedAt.ToString("d MMM yyyy", new CultureInfo("tr-TR")),
-                ShortenedMessageText = ShortenMessage(x.LastMessage.MessageText, 20),
+                ShortenedMessageText = MessageHelper.ShortenMessage(x.LastMessage.MessageText, 20),
                 UnreadCount = x.UnreadCount,
                 SenderStatus = UserStatus.Online,
                 SenderPhotoUrl = x.LastMessage.Sender.PhotoUrl
@@ -70,24 +75,6 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetInboxQuery
                 TotalCount = totalCount,
                 TotalPages = totalPages
             });
-        }
-        private string ShortenMessage(string messageText, int maxLength)
-        {
-            if (string.IsNullOrEmpty(messageText))
-                return messageText;
-
-            if (messageText.Contains("\n"))
-            {
-                var indexOfNewLine = messageText.IndexOf("\n");
-                return messageText.Substring(0, indexOfNewLine) + "...";
-            }
-
-            if (messageText.Length > maxLength)
-            {
-                return $"{messageText.Substring(0, maxLength)} ...";
-            }
-
-            return messageText;
         }
     }
 }

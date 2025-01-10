@@ -23,23 +23,22 @@ namespace RandevuPlus.API.App.Features.Messages.Commands.SendMessageCommand
             if (!userExists) return Result.Error("UserNotFound");
 
             var userId = _currentUserService.UserId.Value;
-            var isInstructor = _currentUserService.Roles.Contains("Instructor");
-            if (isInstructor)
-            {
-                var checkAppointment = await _unitOfWork.Appointments.CheckAppointmentAsync(command.ReceiverId, userId);
-                if (!checkAppointment) return Result.Error("Unauthorized");
-            }
-            else
-            {
-                var checkAppointment = await _unitOfWork.Appointments.CheckAppointmentAsync(userId, command.ReceiverId);
-                if (!checkAppointment) return Result.Error("Unauthorized");
-            }
+            //var isInstructor = _currentUserService.Roles.Contains("Instructor");
+            //if (isInstructor)
+            //{
+            //    var checkAppointment = await _unitOfWork.Appointments.CheckAppointmentAsync(command.ReceiverId, userId);
+            //    if (!checkAppointment) return Result.Error("Unauthorized");
+            //}
+            //else
+            //{
+            //    var checkAppointment = await _unitOfWork.Appointments.CheckAppointmentAsync(userId, command.ReceiverId);
+            //    if (!checkAppointment) return Result.Error("Unauthorized");
+            //}
 
             var message = new Message()
             {
                 SenderId = userId,
                 ReceiverId = command.ReceiverId,
-                Title = command.Title,
                 MessageText = command.MessageText,
                 IsRead = false
             };

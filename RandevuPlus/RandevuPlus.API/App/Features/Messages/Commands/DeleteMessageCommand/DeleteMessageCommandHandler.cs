@@ -21,7 +21,7 @@ namespace RandevuPlus.API.App.Features.Messages.Commands.DeleteMessageCommand
             if (message == null) return Result.Error("MessageNotFound");
 
             var userId = _currentUserService.UserId.Value;
-            if (message.ReceiverId != userId || message.SenderId != userId) return Result.Error("Unauthorized");
+            if (message.SenderId != userId) return Result.Error("Unauthorized");
 
             if (message.SenderId == userId) message.IsRemovedFromSender = true;
             if (message.ReceiverId == userId) message.IsRemovedFromReceiver = true;
