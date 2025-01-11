@@ -19,16 +19,16 @@ namespace RandevuPlus.API.App.Features.Courses
         private readonly IMediator _mediator = mediator;
 
         [HttpPost]
-        public async Task<ActionResult> CreateCourse([FromBody] CreateCourseCommand command)
-            => (await _mediator.Send(command)).ToActionResult(this);
+        public async Task<ActionResult<Result>> CreateCourse([FromBody] CreateCourseCommand command)
+            => await _mediator.Send(command);
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult> UpdateCourse(Guid id, [FromBody] UpdateCourseCommand command)
-            => (await _mediator.Send(command.SetId(id))).ToActionResult(this);
+        public async Task<ActionResult<Result>> UpdateCourse(Guid id, [FromBody] UpdateCourseCommand command)
+            => await _mediator.Send(command.SetId(id));
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCourse(Guid id)
-            => (await _mediator.Send(new DeleteCourseCommand(id))).ToActionResult(this);
+        public async Task<ActionResult<Result>> DeleteCourse(Guid id)
+            => await _mediator.Send(new DeleteCourseCommand(id));
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetCourseQueryResponse>> GetCourse(Guid id)

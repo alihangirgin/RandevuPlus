@@ -37,7 +37,7 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery
                 var currentTime = DateTime.UtcNow.AddHours(3);
                 var updatedSlotString = availability.SlotString.Select((slot, index) =>
                 {
-                    var slotTime = currentTime.Date.AddMinutes(index * 30);
+                    var slotTime = availability.Date.AddMinutes(index * 30);
                     return slotTime < currentTime ? '0' : slot;
                 }).ToArray();
                 availability.SlotString = new string(updatedSlotString);

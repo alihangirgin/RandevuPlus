@@ -11,9 +11,17 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         {
         }
 
-        public async Task<Instructor?> GetByUserIdAsync(Guid userId)
+        public async Task<Instructor?> GetByUserIdAsync(Guid userId, List<string>? includes = null)
         {
-            return await _dbSet.FirstOrDefaultAsync(i => i.UserId == userId);   
+            var query = _dbSet.AsQueryable();
+            if (includes != null)
+            {
+                foreach (var item in includes)
+                {
+                    query = query.Include(item);
+                }
+            }
+            return await query.FirstOrDefaultAsync(i => i.UserId == userId);   
         }
     }
 }

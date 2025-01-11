@@ -1,13 +1,15 @@
 ﻿using Ardalis.Result;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Availabilities.Queries.GetMyAvailabilitiesQuery
 {
-    public class GetMyAvailabilitiesQueryHandler : IRequestHandler<GetMyAvailabilitiesQuery, Result<List<GetMyAvailabilityQueryResponse>>>
+    public class GetMyAvailabilitiesQueryHandler : IRequestHandler<GetMyAvailabilitiesQuery, Result<List<GetInstructorQueryAvailabilityResponse>>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
@@ -20,31 +22,28 @@ namespace RandevuPlus.API.App.Features.Availabilities.Queries.GetMyAvailabilitie
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<List<GetMyAvailabilityQueryResponse>>> Handle(GetMyAvailabilitiesQuery query, CancellationToken cancellationToken)
+        public async Task<Result<List<GetInstructorQueryAvailabilityResponse>>> Handle(GetMyAvailabilitiesQuery query, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.UserId.Value;
             var instructor = await _unitOfWork.Instructors.GetByUserIdAsync(userId);
             if (instructor == null) return Result.Error("InstructorNotFound");
 
-            var availabilities = await _unitOfWork.Availabilities.GetAvailabilitiesByDateAsync(instructor.Id, query.StartDate, query.EndDate);
+            var availabilities = await _unitOfWork.Availabilities.GetCurrentAvailabilities(instructor.Id);
 
-            List<DateTime> betweenDates = Enumerable.Range(0, (query.EndDate.Date - query.StartDate.Date).Days + 1)
-                     .Select(offset => query.StartDate.Date.AddDays(offset))
-                     .ToList();
-            var missingDates = betweenDates.Except(availabilities.Select(x => x.Date)).ToList();
-            foreach (var missingDate in missingDates)
+            foreach (var availability in availabilities)  //slot stringde tarihi geçen saatleri çıkartmak istiyorum, mappera koyulabilir
             {
-                var emptyAvailability = new Availability
+                var currentTime = DateTime.UtcNow.AddHours(3);
+                var updatedSlotString = availability.SlotString.Select((slot, index) =>
                 {
-                    Id = Guid.NewGuid(),
-                    Date = missingDate,
-                    InstructorId = instructor.Id,
-                    SlotString = "000000000000000000000000000000000000000000000000"
-                };
-                availabilities.Add(emptyAvailability);
+                    var slotTime = availability.Date.AddMinutes(index * 30);
+                    return slotTime < currentTime ? '2' : slot;
+                }).ToArray();
+                availability.SlotString = new string(updatedSlotString);
             }
+            availabilities = availabilities.Where(a => !a.SlotString.All(c => c == '0' || c == '2')).ToList();
 
-            return Result.Success(_mapper.Map<List<GetMyAvailabilityQueryResponse>>(availabilities));
+            var availabilitiesResponse = _mapper.Map<List<GetInstructorQueryAvailabilityResponse>>(availabilities);
+            return Result.Success(availabilitiesResponse);
         }
     }
 }

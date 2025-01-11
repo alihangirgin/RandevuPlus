@@ -4,6 +4,6 @@ namespace RandevuPlus.API.Shared.Interfaces.Repositories
 {
     public interface IInstructorRepository : IRepository<Instructor>
     {
-        Task<Instructor?> GetByUserIdAsync(Guid userId);
+        Task<Instructor?> GetByUserIdAsync(Guid userId, List<string>? includes = null);
     }
 }

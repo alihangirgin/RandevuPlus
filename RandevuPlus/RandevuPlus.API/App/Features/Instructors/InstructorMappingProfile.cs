@@ -1,5 +1,12 @@
 ﻿using AutoMapper;
+using RandevuPlus.API.App.Features.Courses.Commands.CreateCourseCommand;
+using RandevuPlus.API.App.Features.Courses.Commands.UpdateCourseCommand;
+using RandevuPlus.API.App.Features.Instructors.Commands.CreateInstructorExperienceCommand;
+using RandevuPlus.API.App.Features.Instructors.Commands.CreateInstructorSkillCommand;
+using RandevuPlus.API.App.Features.Instructors.Commands.UpdateInstructorExperienceCommand;
+using RandevuPlus.API.App.Features.Instructors.Commands.UpdateInstructorSkillCommand;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
+using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorProfileQuey;
 using RandevuPlus.API.Shared.Domain;
 
 namespace RandevuPlus.API.App.Features.Instructors
@@ -21,6 +28,18 @@ namespace RandevuPlus.API.App.Features.Instructors
                     src.Experiences.Select(e => new GetInstructorQueryExperienceResponse(e.Id, e.Description, e.ExperienceType)).ToList()))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src =>
                     src.Reviews.Select(r => new GetInstructorQueryReviewResponse(r.Id, r.Rating, r.Comment)).ToList()));
+
+            CreateMap<Instructor, GetInstructorProfileResponse>()
+                .ForMember(dest => dest.Skills, opt => opt.MapFrom(src =>
+                    src.Skills.Select(s => new GetInstructorQuerySkillResponse(s.Id, s.SkillName)).ToList()))
+                .ForMember(dest => dest.Experiences, opt => opt.MapFrom(src =>
+                    src.Experiences.Select(e => new GetInstructorQueryExperienceResponse(e.Id, e.Description, e.ExperienceType)).ToList()));
+
+
+            CreateMap<CreateInstructorExperienceCommand, InstructorExperience>();
+            CreateMap<UpdateInstructorExperienceCommand, InstructorExperience>();
+            CreateMap<CreateInstructorSkillCommand, InstructorSkill>();
+            CreateMap<UpdateInstructorSkillCommand, InstructorSkill>();
 
             CreateMap<InstructorReview, GetInstructorQueryReviewResponse>();
             CreateMap<InstructorSkill, GetInstructorQuerySkillResponse>();

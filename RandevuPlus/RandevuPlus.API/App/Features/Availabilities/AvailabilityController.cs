@@ -1,8 +1,10 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Availabilities.Commands.SetAvailabilityCommand;
 using RandevuPlus.API.App.Features.Availabilities.Queries.GetMyAvailabilitiesQuery;
+using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
 
 namespace RandevuPlus.API.App.Features.Availabilities
 {
@@ -13,12 +15,12 @@ namespace RandevuPlus.API.App.Features.Availabilities
         private readonly IMediator _mediator = mediator;
 
         [HttpPost("set-availability")]
-        public async Task<ActionResult> SetAvailability([FromBody] SetAvailabilitiesCommand command)
-            => (await _mediator.Send(command)).ToActionResult(this);
+        public async Task<ActionResult<Result>> SetAvailability([FromBody] SetAvailabilitiesCommand command)
+            => await _mediator.Send(command);
 
         [ProducesResponseType(typeof(List<GetMyAvailabilityQueryResponse>), StatusCodes.Status200OK)]
         [HttpGet("my-availabilities")]
-        public async Task<ActionResult<List<GetMyAvailabilityQueryResponse>>> GetMyAvailabilities([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-            => (await _mediator.Send(new GetMyAvailabilitiesQuery(startDate ?? DateTime.UtcNow.AddHours(3).Date, endDate ?? DateTime.UtcNow.AddHours(3).Date.AddDays(1).AddSeconds(-1)))).ToActionResult(this);
+        public async Task<ActionResult<Result<List<GetInstructorQueryAvailabilityResponse>>>> GetMyAvailabilities()
+            => await _mediator.Send(new GetMyAvailabilitiesQuery());
     }
 }
