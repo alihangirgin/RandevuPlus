@@ -1,5 +1,7 @@
 ﻿using Ardalis.Result;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
+using RandevuPlus.API.Infrastructure.Sockets;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
@@ -9,12 +11,16 @@ namespace RandevuPlus.API.App.Features.Messages.Commands.SendMessageCommand
     public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Result>
     {
         private readonly ICurrentUserService _currentUserService;
+        private readonly IHubContext<UserHub> _hubContext;
+        private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public SendMessageCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public SendMessageCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IHubContext<UserHub> hubContext, IUserService userService)
         {
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _hubContext = hubContext;
+            _userService = userService;
         }
 
         public async Task<Result> Handle(SendMessageCommand command, CancellationToken cancellationToken)
@@ -44,6 +50,10 @@ namespace RandevuPlus.API.App.Features.Messages.Commands.SendMessageCommand
             };
             await _unitOfWork.Messages.AddAsync(message);
             await _unitOfWork.CommitAsync();
+
+            if (_userService.GetOnlineUsers().Contains(command.ReceiverId.ToString()))
+                await _hubContext.Clients.User(command.ReceiverId.ToString()).SendAsync("MessageReceived", userId);
+
             return Result.Success();
         }
     }

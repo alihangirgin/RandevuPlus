@@ -4,16 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Shared.Dtos;
 using RandevuPlus.API.Shared.Enums;
+using RandevuPlus.API.Shared.Interfaces.Services;
 
 namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
 {
     public class GetInstructorsQueryHandler : IRequestHandler<GetInstructorsQuery, Result<PaginatedResponse<GetInstructorsQueryResponse>>>
     {
         private readonly AppDbContext _context;
-
-        public GetInstructorsQueryHandler(AppDbContext context)
+        private readonly IUserService _userService;
+        public GetInstructorsQueryHandler(AppDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<Result<PaginatedResponse<GetInstructorsQueryResponse>>> Handle(GetInstructorsQuery query, CancellationToken cancellationToken)
@@ -83,7 +85,7 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
                 i.User.PhotoUrl,
                 i.User.FullName,
                 i.Title ?? string.Empty,
-                UserStatus.Online,
+                _userService.GetUserStatus(i.UserId),
                 i.Reviews.Any() ? (byte?)i.Reviews.Average(r => r.Rating) : null,
                 i.Availabilities.Any(a => a.Date.Date == DateTime.UtcNow.AddHours(3).Date && a.SlotString.Contains("1")),
                 i.Courses.Select(c => new GetInstructorQueryCourseResponse(

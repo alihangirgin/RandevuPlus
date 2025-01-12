@@ -1,5 +1,7 @@
 ﻿using Ardalis.Result;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
+using RandevuPlus.API.Infrastructure.Sockets;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
@@ -9,10 +11,14 @@ namespace RandevuPlus.API.App.Features.Messages.Commands.DeleteMessageCommand
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
-        public DeleteMessageCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        private readonly IHubContext<UserHub> _hubContext;
+        private readonly IUserService _userService;
+        public DeleteMessageCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IHubContext<UserHub> hubContext, IUserService userService)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
+            _userService = userService;
         }
 
         public async Task<Result> Handle(DeleteMessageCommand command, CancellationToken cancellationToken)
@@ -23,11 +29,16 @@ namespace RandevuPlus.API.App.Features.Messages.Commands.DeleteMessageCommand
             var userId = _currentUserService.UserId.Value;
             if (message.SenderId != userId) return Result.Error("Unauthorized");
 
-            if (message.SenderId == userId) message.IsRemovedFromSender = true;
-            if (message.ReceiverId == userId) message.IsRemovedFromReceiver = true;
+            message.IsRemovedFromSender = true;
+            message.IsRemovedFromReceiver = true;
 
             await _unitOfWork.Messages.UpdateAsync(message);
             await _unitOfWork.CommitAsync();
+
+            var eventReceiverId = message.SenderId != userId ? message.SenderId : message.ReceiverId;
+            if (_userService.GetOnlineUsers().Contains(eventReceiverId.ToString()))
+                await _hubContext.Clients.User(eventReceiverId.ToString()).SendAsync("MessageUpdated", userId);
+
             return Result.Success();
         }
     }

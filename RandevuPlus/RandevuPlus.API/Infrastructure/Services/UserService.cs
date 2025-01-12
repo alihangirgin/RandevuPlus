@@ -2,7 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Dtos;
+using RandevuPlus.API.Shared.Enums;
 using RandevuPlus.API.Shared.Interfaces.Services;
+using RandevuPlus.API.Shared.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -42,6 +44,17 @@ namespace RandevuPlus.API.Infrastructure.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return new GenerateJwtTokenDto(tokenHandler.WriteToken(token), expiresIn);
+        }
+
+        public List<string> GetOnlineUsers()
+        {
+            var asdas = OnlineUsers.Users.Keys.ToList();
+            return OnlineUsers.Users.Keys.ToList();
+        }
+
+        public UserStatus GetUserStatus(Guid userId)
+        {
+            return GetOnlineUsers().Contains(userId.ToString()) ? UserStatus.Online : UserStatus.Offline;
         }
     }
 }

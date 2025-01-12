@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RandevuPlus.API.Shared.Domain;
-using RandevuPlus.API.Shared.Dtos;
 using RandevuPlus.API.Shared.Enums;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
@@ -16,14 +15,16 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetMessageQuery
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public GetMessageQueryHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager)
+        public GetMessageQueryHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager, IUserService userService)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<Result<GetMessageQueryResponse>> Handle(GetMessageQuery query, CancellationToken cancellationToken)
@@ -60,7 +61,8 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetMessageQuery
 
             foreach (var message in messages)
             {
-                message.IsRead = true;
+                if(message.ReceiverId == userId)
+                    message.IsRead = true;
             }
             await _unitOfWork.Messages.UpdateRangeAsync(messages);
             await _unitOfWork.CommitAsync();
@@ -86,7 +88,7 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetMessageQuery
                 recipientUser.Id,
                 recipientUser.FullName,
                 isInstructor ? instructor?.Title : "Öğrenci",
-                UserStatus.Online,
+                _userService.GetUserStatus(recipientUser.Id),
                 recipientUser.PhotoUrl
             );
 

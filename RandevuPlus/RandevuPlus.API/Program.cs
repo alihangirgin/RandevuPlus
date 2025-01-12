@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using RandevuPlus.API.Infrastructure.Services;
+using RandevuPlus.API.Infrastructure.Sockets;
 using RandevuPlus.API.Infrastructure.UnitOfWork;
 using RandevuPlus.API.Shared.Extensions;
 using RandevuPlus.API.Shared.Interfaces.Services;
@@ -67,7 +68,8 @@ var connectionString = builder.Configuration.GetConnectionString("RandevuPlusDb"
 builder.Services.AddDbContext(connectionString);
 builder.Services.ConfigureJwtBearer(builder.Configuration);
 builder.Services.AddFeatures();
-
+builder.Services.AddSignalR();
+builder.Services.AddSignalRCore();
 var app = builder.Build();
 
 // CORS'u kullanmaya baþlamak için
@@ -93,7 +95,10 @@ app.UseSwaggerUI(c =>
 
 
 app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
+
+app.MapHub<UserHub>("/userHub").RequireAuthorization(); 
 
 app.MapControllers();
 

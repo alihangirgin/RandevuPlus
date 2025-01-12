@@ -14,13 +14,13 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetInboxQuery
     public class GetInboxQueryHandler : IRequestHandler<GetInboxQuery, Result<PaginatedResponse<GetInboxQueryResponseItem>>>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        public GetInboxQueryHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IUserService _userService;
+        public GetInboxQueryHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IUserService userService)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<Result<PaginatedResponse<GetInboxQueryResponseItem>>> Handle(GetInboxQuery query, CancellationToken cancellationToken)
@@ -60,8 +60,8 @@ namespace RandevuPlus.API.App.Features.Messages.Queries.GetInboxQuery
                 LastMessageDate = x.LastMessage.CreatedAt.ToString("d MMM yyyy", new CultureInfo("tr-TR")),
                 ShortenedMessageText = MessageHelper.ShortenMessage(x.LastMessage.MessageText, 20),
                 UnreadCount = x.UnreadCount,
-                SenderStatus = UserStatus.Online,
-                SenderPhotoUrl = x.LastMessage.Sender.PhotoUrl
+                SenderStatus = _userService.GetUserStatus(x.LastMessage.SenderId == userId ? x.LastMessage.ReceiverId : x.LastMessage.SenderId),
+                SenderPhotoUrl = x.LastMessage.SenderId == userId ? x.LastMessage.Receiver.PhotoUrl : x.LastMessage.Sender.PhotoUrl
             })
             .ToList();
 
