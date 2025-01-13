@@ -28,5 +28,10 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         {
             return await _context.Users.Where(x => x.FullName.Contains(prefix)).Take(10).ToListAsync();
         }
+
+        public IQueryable<AppUser> GetQueryable()
+        {
+            return _context.Users.AsQueryable();
+        }
     }
 }

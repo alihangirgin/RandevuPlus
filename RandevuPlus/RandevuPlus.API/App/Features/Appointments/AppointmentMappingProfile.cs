@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery;
+using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsHistoryQuery;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery;
 using RandevuPlus.API.Shared.Domain;
 using System.Globalization;
@@ -31,6 +32,20 @@ namespace RandevuPlus.API.App.Features.Appointments
                  .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("d MMMM yyyy", new CultureInfo("tr-TR"))))
                  .ForMember(dest => dest.StartHour, opt => opt.MapFrom(src => src.Date.AddHours(src.SlotStartIndex).Hour))
                  .ForMember(dest => dest.EndHour, opt => opt.MapFrom(src => src.Date.AddHours(src.SlotEndIndex).Hour));
+
+            CreateMap<Appointment, GetMyAppointmentsHistoryQueryResponse>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name))
+                .ForPath(dest => dest.Instructor.Id, opt => opt.MapFrom(src => src.Instructor.Id))
+                .ForPath(dest => dest.Instructor.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.FullName))
+                .ForPath(dest => dest.Instructor.InstructorTitle, opt => opt.MapFrom(src => src.Instructor.Title))
+                .ForPath(dest => dest.Instructor.InstructorPhotoUrl, opt => opt.MapFrom(src => src.Instructor.User.PhotoUrl))
+                .ForPath(dest => dest.User.UserPhotoUrl, opt => opt.MapFrom(src => src.User.PhotoUrl))
+                .ForPath(dest => dest.User.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForPath(dest => dest.User.UserTitle, opt => opt.MapFrom(src => "Öğrenci"))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("d MMMM yyyy", new CultureInfo("tr-TR"))))
+                .ForMember(dest => dest.StartHour, opt => opt.MapFrom(src => src.Date.AddHours(src.SlotStartIndex).Hour))
+                .ForMember(dest => dest.EndHour, opt => opt.MapFrom(src => src.Date.AddHours(src.SlotEndIndex).Hour));
+
         }
     }
 }

@@ -11,6 +11,17 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         public AppointmentRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
+
+        public async Task<List<Appointment>> GetInstructorAppointmentsAsync(Guid instructorId)
+        {
+            return await _dbSet.Include(x => x.Course).Include(x => x.Instructor)
+                .Where(x => x.InstructorId == instructorId && x.Status != AppointmentStatus.Draft).ToListAsync();
+        }
+        public async Task<List<Appointment>> GetUserAppointmentsAsync(Guid userId)
+        {
+            return await _dbSet.Include(x => x.Course).Include(x => x.User)
+                .Where(x => x.UserId == userId && x.Status != AppointmentStatus.Draft).ToListAsync();
+        }
         public async Task<List<Appointment>> GetInstructorAppointmentsByDateAsync(Guid instructorId, DateTime startDate, DateTime endDate)
         {
             return await _dbSet.Include(x => x.Course).Include(x => x.Instructor)

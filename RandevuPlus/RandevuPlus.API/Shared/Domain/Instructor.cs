@@ -11,5 +11,6 @@
         public virtual ICollection<InstructorSkill> Skills { get; set; }
         public virtual ICollection<InstructorExperience> Experiences { get; set; }
         public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
     }
 }

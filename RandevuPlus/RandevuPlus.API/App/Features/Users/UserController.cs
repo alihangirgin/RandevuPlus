@@ -8,6 +8,7 @@ using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
 using RandevuPlus.API.App.Features.Users.Commands.RegisterCommand;
 using RandevuPlus.API.App.Features.Users.Commands.UpdateNameCommand;
 using RandevuPlus.API.App.Features.Users.Commands.UpdateProfileCommand;
+using RandevuPlus.API.App.Features.Users.Queries.GetMyAppointedInstructorsQuery;
 using RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery;
 
 namespace RandevuPlus.API.App.Features.Users
@@ -45,5 +46,9 @@ namespace RandevuPlus.API.App.Features.Users
         [HttpGet("my-profile")]
         public async Task<ActionResult<Result<GetProfileQueryResponse>>> GetProfile()
             => await _mediator.Send(new GetProfileQuery());
+
+        [HttpGet("my-appointed-instructors")]
+        public async Task<ActionResult<Result<List<GetMyAppointedInstructorsQueryResponse>>>> GetMyAppointedInstructors()
+            => await _mediator.Send(new GetMyAppointedInstructorsQuery());
     }
 }

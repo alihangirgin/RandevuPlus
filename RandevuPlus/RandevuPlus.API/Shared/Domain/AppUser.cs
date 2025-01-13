@@ -8,5 +8,6 @@ namespace RandevuPlus.API.Shared.Domain
         public string? PhotoUrl { get; set; }    
         public virtual ICollection<Purchase> Purchases { get; set; }
         public virtual ICollection<InstructorReview> Reviews { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
     }
 }
