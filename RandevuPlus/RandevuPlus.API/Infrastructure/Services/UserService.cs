@@ -48,7 +48,6 @@ namespace RandevuPlus.API.Infrastructure.Services
 
         public List<string> GetOnlineUsers()
         {
-            var asdas = OnlineUsers.Users.Keys.ToList();
             return OnlineUsers.Users.Keys.ToList();
         }
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RandevuPlus.API.Infrastructure.BackgroundServices;
 using RandevuPlus.API.Infrastructure.Services;
 using RandevuPlus.API.Infrastructure.Sockets;
 using RandevuPlus.API.Infrastructure.UnitOfWork;
@@ -70,6 +71,9 @@ builder.Services.ConfigureJwtBearer(builder.Configuration);
 builder.Services.AddFeatures();
 builder.Services.AddSignalR();
 builder.Services.AddSignalRCore();
+
+builder.Services.AddHostedService<TimedBackgroundService>();
+
 var app = builder.Build();
 
 // CORS'u kullanmaya baþlamak için

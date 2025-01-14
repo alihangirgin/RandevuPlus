@@ -11,5 +11,6 @@ namespace RandevuPlus.API.Shared.Interfaces.Repositories
         Task<List<Instructor>> SearchUsersAppointedInstructorsAsync(Guid userId, string prefix);
         Task<List<AppUser>> SearchInstructorsAppointedUsersAsync(Guid instructorId, string prefix);
         Task<bool> CheckAppointmentAsync(Guid userId, Guid instructorId);
+        Task<List<Appointment>> GetEndedAppointmentsAsync();
     }
 }

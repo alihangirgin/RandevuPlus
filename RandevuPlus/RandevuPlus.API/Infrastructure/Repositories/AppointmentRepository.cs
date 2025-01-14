@@ -51,7 +51,15 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         public async Task<bool> CheckAppointmentAsync(Guid userId, Guid instructorId)
         {
             return await _dbSet.AnyAsync(x => x.UserId == userId && x.InstructorId == instructorId && x.Status != AppointmentStatus.Draft);
-               
+
+        }
+
+        public async Task<List<Appointment>> GetEndedAppointmentsAsync()
+        {
+            var currentDate = DateTime.UtcNow.AddHours(3);
+            return await _dbSet
+                .Include(x => x.Instructor)
+                .Where(x => x.Status == AppointmentStatus.Scheduled && currentDate >= x.Date.AddMinutes(x.SlotEndIndex * 30)).ToListAsync();
         }
     }
 }
