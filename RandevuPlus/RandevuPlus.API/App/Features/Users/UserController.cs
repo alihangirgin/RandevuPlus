@@ -57,7 +57,7 @@ namespace RandevuPlus.API.App.Features.Users
         public async Task<ActionResult<Result>> SaveInstructor([FromBody] SaveInstructorCommand command)
             => await _mediator.Send(command);
 
-        [HttpPost("saved-instructors")]
+        [HttpGet("saved-instructors")]
         public async Task<ActionResult<Result<List<GetSavedInstructorsQueryResponse>>>> GetSavedInstructors()
             => await _mediator.Send(new GetSavedInstructorsQuery());
     }

@@ -3,9 +3,9 @@ using RandevuPlus.API.Shared.Enums;
 
 namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery
 {
-    public sealed record GetInstructorQueryResponse(Guid Id, string? PhotoUrl, string FullName, string Title, UserStatus Status, byte? InstructorRating, List<GetInstructorQueryAvailabilityResponse> Availabilities, string? Bio, List<GetInstructorQuerySkillResponse> Skills, List<GetInstructorQueryExperienceResponse> Experiences, List<GetInstructorQueryReviewResponse> Reviews, List<GetCourseQueryResponse> Courses)
+    public sealed record GetInstructorQueryResponse(Guid Id, string? PhotoUrl, string FullName, string Title, UserStatus Status, byte? InstructorRating, List<GetInstructorQueryAvailabilityResponse> Availabilities, string? Bio, List<GetInstructorQuerySkillResponse> Skills, List<GetInstructorQueryExperienceResponse> Experiences, List<GetInstructorQueryReviewResponse> Reviews, List<GetCourseQueryResponse> Courses, bool IsSaved)
     {
-        public GetInstructorQueryResponse() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, UserStatus.NotSet, null, new List<GetInstructorQueryAvailabilityResponse>(), null, new List<GetInstructorQuerySkillResponse>(), new List<GetInstructorQueryExperienceResponse>(), new List<GetInstructorQueryReviewResponse>(), new List<GetCourseQueryResponse>())
+        public GetInstructorQueryResponse() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, UserStatus.NotSet, null, new List<GetInstructorQueryAvailabilityResponse>(), null, new List<GetInstructorQuerySkillResponse>(), new List<GetInstructorQueryExperienceResponse>(), new List<GetInstructorQueryReviewResponse>(), new List<GetCourseQueryResponse>(), false)
         {
         }
     }

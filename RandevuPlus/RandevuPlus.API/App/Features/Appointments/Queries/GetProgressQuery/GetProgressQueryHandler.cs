@@ -111,7 +111,7 @@ namespace RandevuPlus.API.App.Features.Appointments.Queries.GetProgressQuery
                 MyInstructorCount: myInstructorCount,
                 MostAppointedInstructor: mostAppointedInstructor?.UserId != null ? new GetProgressQueryInstructorResponse(mostAppointedInstructor.UserId, mostAppointedInstructor.UserPhotoPath) : null,
                 FavouriteInstructor: favouriteInstructor?.UserId != null ? new GetProgressQueryInstructorResponse(favouriteInstructor.UserId, favouriteInstructor.UserPhotoPath) : null,
-                AverageReviewPoint: averageReviewPoint,
+                AverageReviewPoint: averageReviewPoint == 0 ? null : averageReviewPoint,
                 Achievement: new GetProgressQueryAchievementResponse(completeAppointment, revievInstructor, inviteFriend)
                 );
 

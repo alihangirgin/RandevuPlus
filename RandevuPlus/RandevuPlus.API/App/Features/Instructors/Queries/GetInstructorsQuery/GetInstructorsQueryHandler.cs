@@ -3,24 +3,27 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RandevuPlus.API.Infrastructure.Data;
 using RandevuPlus.API.Shared.Dtos;
-using RandevuPlus.API.Shared.Enums;
 using RandevuPlus.API.Shared.Interfaces.Services;
+using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
 
 namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
 {
     public class GetInstructorsQueryHandler : IRequestHandler<GetInstructorsQuery, Result<PaginatedResponse<GetInstructorsQueryResponse>>>
     {
-        private readonly AppDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IUserService _userService;
-        public GetInstructorsQueryHandler(AppDbContext context, IUserService userService)
+        private readonly IUnitOfWork _unitOfWork;
+        public GetInstructorsQueryHandler(IUserService userService, ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
-            _context = context;
             _userService = userService;
+            _currentUserService = currentUserService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<PaginatedResponse<GetInstructorsQueryResponse>>> Handle(GetInstructorsQuery query, CancellationToken cancellationToken)
         {
-            var responseQuery = _context.Instructors
+            Guid? userId = _currentUserService.UserId;
+            var responseQuery = _unitOfWork.Instructors.GetQueryable()
                 .Include(i => i.User)
                 .Include(i => i.Reviews)
                 .Include(i => i.Availabilities)
@@ -36,13 +39,13 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
             // Filtreleme: Date ve Slotlar
             if (query.Date.HasValue && query.SlotStartIndex.HasValue && query.SlotEndIndex.HasValue && query.SlotSize.HasValue)
             {
-                
+
                 var slotPattern = new string('1', query.SlotSize.Value);
 
                 responseQuery = responseQuery.Where(i =>
                     i.Availabilities.Any(a =>
                         a.Date.Date == query.Date.Value.Date && // Aynı tarihte olmalı
-                        a.SlotString.Substring(query.SlotStartIndex.Value, query.SlotEndIndex.Value - query.SlotStartIndex.Value + 1).Contains(slotPattern)   
+                        a.SlotString.Substring(query.SlotStartIndex.Value, query.SlotEndIndex.Value - query.SlotStartIndex.Value + 1).Contains(slotPattern)
                     )
                 );
             }
@@ -91,6 +94,7 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
                 _userService.GetUserStatus(i.UserId),
                 i.Reviews.Any() ? (byte?)i.Reviews.Average(r => r.Rating) : null,
                 i.Availabilities.Any(y => y.Date.Date == DateTime.UtcNow.Date.AddHours(3).Date && y.SlotString.Substring(currentSlotIndex + 1).Contains('1')),
+                _unitOfWork.Users.GetQueryable().Include(x=> x.SavedInstructors).Where(x=> x.Id == userId).SelectMany(x=> x.SavedInstructors).Any(y=> y.InstructorId == i.Id),
                 i.Courses.Select(c => new GetInstructorQueryCourseResponse(
                     c.Id,
                     c.Name,

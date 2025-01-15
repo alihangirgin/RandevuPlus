@@ -50,8 +50,8 @@ namespace RandevuPlus.API.App.Features.Users.Queries.GetSavedInstructorsQuery
                 new GetSavedInstructorsQueryResponse(
                     Id: x.Id,
                     PhotoUrl: x.PhotoUrl,
-                    FullName: x.PhotoUrl,
-                    Title: x.PhotoUrl,
+                    FullName: x.FullName,
+                    Title: x.Title,
                     Status: x.Status,
                     InstructorRating: x.InstructorRating,
                     IsAvailableToday: x.Availabilities.Any(y => y.Date.Date == DateTime.UtcNow.Date.AddHours(3).Date && y.SlotString.Substring(currentSlotIndex + 1).Contains('1'))

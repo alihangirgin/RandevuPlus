@@ -9,7 +9,7 @@
     public sealed record GetProgressQueryResponse(string Title, 
         int WeeklyPlannedAppointmentHour, int WeeklyCompletedAppointmentHour, int TotalCompletedAppointmentHour,
         int MyInstructorCount, GetProgressQueryInstructorResponse? MostAppointedInstructor, GetProgressQueryInstructorResponse? FavouriteInstructor,
-        double AverageReviewPoint,
+        double? AverageReviewPoint,
         GetProgressQueryAchievementResponse Achievement
         );
 }
