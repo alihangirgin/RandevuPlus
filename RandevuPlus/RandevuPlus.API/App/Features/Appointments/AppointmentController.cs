@@ -8,6 +8,7 @@ using RandevuPlus.API.App.Features.Appointments.Queries.CalculatePriceQuery;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetAppointmentQuery;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsHistoryQuery;
 using RandevuPlus.API.App.Features.Appointments.Queries.GetMyAppointmentsQuery;
+using RandevuPlus.API.App.Features.Appointments.Queries.GetProgressQuery;
 using RandevuPlus.API.Shared.Dtos;
 
 namespace RandevuPlus.API.App.Features.Appointments
@@ -43,5 +44,11 @@ namespace RandevuPlus.API.App.Features.Appointments
         [HttpGet("my-appointments-history")]
         public async Task<ActionResult<Result<PaginatedResponse<GetMyAppointmentsHistoryQueryResponse>>>> GetMyAppointmentsHistory([FromQuery] int? pageNumber, [FromQuery] int? pageSize, [FromQuery] string? prefix, [FromQuery] string? relatedId, [FromQuery] string? status, [FromQuery] string? orderBy, [FromQuery] bool descending)
             => await _mediator.Send(new GetMyAppointmentsHistoryQuery(pageNumber ?? 1 , pageSize ?? 10,prefix, relatedId, status, orderBy, descending));
+
+
+        [ProducesResponseType(typeof(GetProgressQueryResponse), StatusCodes.Status200OK)]
+        [HttpGet("my-progress")]
+        public async Task<ActionResult<Result<GetProgressQueryResponse>>> GetProgress()
+            => await _mediator.Send(new GetProgressQuery());
     }
 }

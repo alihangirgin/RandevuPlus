@@ -8,5 +8,6 @@ namespace RandevuPlus.API.Shared.Interfaces.Repositories
         Task<bool> CheckAsync(Guid id);
         Task<List<AppUser>> SearchUsersAsync(string prefix);
         IQueryable<AppUser> GetQueryable();
+        Task<AppUser?> UpdateAsync(AppUser user);
     }
 }

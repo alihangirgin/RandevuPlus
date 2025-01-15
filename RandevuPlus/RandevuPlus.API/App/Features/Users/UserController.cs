@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using RandevuPlus.API.App.Features.Users.Commands.ChangePasswordCommand;
 using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
 using RandevuPlus.API.App.Features.Users.Commands.RegisterCommand;
+using RandevuPlus.API.App.Features.Users.Commands.SaveInstructorCommand;
 using RandevuPlus.API.App.Features.Users.Commands.UpdateNameCommand;
 using RandevuPlus.API.App.Features.Users.Commands.UpdateProfileCommand;
 using RandevuPlus.API.App.Features.Users.Queries.GetMyAppointedInstructorsQuery;
 using RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery;
+using RandevuPlus.API.App.Features.Users.Queries.GetSavedInstructorsQuery;
 
 namespace RandevuPlus.API.App.Features.Users
 {
@@ -50,5 +52,13 @@ namespace RandevuPlus.API.App.Features.Users
         [HttpGet("my-appointed-instructors")]
         public async Task<ActionResult<Result<List<GetMyAppointedInstructorsQueryResponse>>>> GetMyAppointedInstructors()
             => await _mediator.Send(new GetMyAppointedInstructorsQuery());
+
+        [HttpPost("save-instructor")]
+        public async Task<ActionResult<Result>> SaveInstructor([FromBody] SaveInstructorCommand command)
+            => await _mediator.Send(command);
+
+        [HttpPost("saved-instructors")]
+        public async Task<ActionResult<Result<List<GetSavedInstructorsQueryResponse>>>> GetSavedInstructors()
+            => await _mediator.Send(new GetSavedInstructorsQuery());
     }
 }

@@ -80,6 +80,9 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
             // Veriyi al
             var instructors = await responseQuery.ToListAsync(cancellationToken);
 
+            TimeSpan timeSinceStartOfDay = DateTime.UtcNow.AddHours(3) - DateTime.UtcNow.AddHours(3).Date;
+            int currentSlotIndex = (int)(timeSinceStartOfDay.TotalMinutes / 30);
+
             var instructorResponses = instructors.Select(i => new GetInstructorsQueryResponse(
                 i.Id,
                 i.User.PhotoUrl,
@@ -87,7 +90,7 @@ namespace RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery
                 i.Title ?? string.Empty,
                 _userService.GetUserStatus(i.UserId),
                 i.Reviews.Any() ? (byte?)i.Reviews.Average(r => r.Rating) : null,
-                i.Availabilities.Any(a => a.Date.Date == DateTime.UtcNow.AddHours(3).Date && a.SlotString.Contains("1")),
+                i.Availabilities.Any(y => y.Date.Date == DateTime.UtcNow.Date.AddHours(3).Date && y.SlotString.Substring(currentSlotIndex + 1).Contains('1')),
                 i.Courses.Select(c => new GetInstructorQueryCourseResponse(
                     c.Id,
                     c.Name,

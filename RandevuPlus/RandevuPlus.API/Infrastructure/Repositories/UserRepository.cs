@@ -33,5 +33,15 @@ namespace RandevuPlus.API.Infrastructure.Repositories
         {
             return _context.Users.AsQueryable();
         }
+
+        public async Task<AppUser?> UpdateAsync(AppUser user)
+        {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
+            if (existingUser == null)
+                return null;
+
+            _context.Users.Update(user);
+            return user;
+        }
     }
 }
