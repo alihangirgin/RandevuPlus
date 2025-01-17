@@ -20,6 +20,7 @@ namespace RandevuPlus.API.Infrastructure.Data.Seeders
                     EmailConfirmed = true,
                     SecurityStamp = Guid.NewGuid().ToString(),
                     PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, TestUserConstants.TestUserPassword),
+                    FullName = TestUserConstants.TestUserUsername
                 });
                 await context.SaveChangesAsync();
             }
