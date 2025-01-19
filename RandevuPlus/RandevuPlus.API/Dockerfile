@@ -21,7 +21,7 @@ RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 FROM base AS final
 WORKDIR /app
 
-COPY ["RandevuPlus.API/certs/localhost.pfx", "/app/certs/localhost.pfx"]
+#COPY ["RandevuPlus.API/certs/localhost.pfx", "/app/certs/localhost.pfx"]
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "RandevuPlus.API.dll"]
