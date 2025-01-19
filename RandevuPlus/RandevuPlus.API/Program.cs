@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowLocalhost",
         policy =>
         {
-            policy.WithOrigins("https://localhost:3000") // React uygulamanýzýn çalýþtýðý adres
+            policy.WithOrigins("https://randevuplus-ui.onrender.com") // React uygulamanýzýn çalýþtýðý adres
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
