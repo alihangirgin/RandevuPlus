@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using RandevuPlus.API.Infrastructure.BackgroundServices;
@@ -8,23 +7,33 @@ using RandevuPlus.API.Infrastructure.UnitOfWork;
 using RandevuPlus.API.Shared.Extensions;
 using RandevuPlus.API.Shared.Interfaces.Services;
 using RandevuPlus.API.Shared.Interfaces.UnitOfWork;
+using RandevuPlus.API.Shared.Models;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(IPAddress.Any, 7159, listenOptions =>
+    {
+        listenOptions.UseHttps("certs/localhost.pfx", "alican");
+    });
+});
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost",
         policy =>
         {
-            policy.WithOrigins("https://*.onrender.com") // React uygulamanýzýn çalýþtýðý adres
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            policy.WithOrigins("https://localhost:3000") // React uygulamanýzýn çalýþtýðý adres
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
         });
 });
+
 
 
 builder.Services.AddControllers();
@@ -72,6 +81,12 @@ builder.Services.ConfigureJwtBearer(builder.Configuration);
 builder.Services.AddFeatures();
 builder.Services.AddSignalR();
 builder.Services.AddSignalRCore();
+
+
+builder.Services.Configure<AiSettings>(builder.Configuration.GetSection("Ai"));
+builder.Services.AddSingleton<IAiService, GeminiService>();
+
+
 
 builder.Services.AddHostedService<TimedBackgroundService>();
 

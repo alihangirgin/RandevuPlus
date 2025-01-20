@@ -13,9 +13,9 @@ using RandevuPlus.API.App.Features.Instructors.Commands.UpdateInstructorSkillCom
 using RandevuPlus.API.App.Features.Instructors.Queries.GetAppointedUsersQuery;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInsructorQuery;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorProfileQuey;
+using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsFromAiQuery;
 using RandevuPlus.API.App.Features.Instructors.Queries.GetInstructorsQuery;
 using RandevuPlus.API.App.Features.Users.Commands.LoginCommand;
-using RandevuPlus.API.App.Features.Users.Queries.GetMyAppointedInstructorsQuery;
 using RandevuPlus.API.Shared.Dtos;
 
 namespace RandevuPlus.API.App.Features.Instructors
@@ -79,5 +79,10 @@ namespace RandevuPlus.API.App.Features.Instructors
         [HttpGet("my-appointed-users")]
         public async Task<ActionResult<Result<List<GetAppointedUsersQueryResponse>>>> GetMyAppointedUsers()
             => await _mediator.Send(new GetAppointedUsersQuery());
+
+        [AllowAnonymous]
+        [HttpGet("from-ai")]
+        public async Task<ActionResult<Result<GetInstructorsFromAiQueryResponse>>> GetInstructorsFromOpenAi([FromQuery] string question)
+            => await _mediator.Send(new GetInstructorsFromAiQuery(question));
     }
 }

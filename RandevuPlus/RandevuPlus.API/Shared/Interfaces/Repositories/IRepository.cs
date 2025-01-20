@@ -10,7 +10,7 @@ namespace RandevuPlus.API.Shared.Interfaces.Repositories
         Task<TEntity> AddAsync(TEntity entity);
         Task<TEntity?> UpdateAsync(TEntity entity);
         Task<IEnumerable<TEntity>?> UpdateRangeAsync(IEnumerable<TEntity> entities);
-        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IEnumerable<TEntity>> GetAllAsync(List<string>? includes = null);
         Task<PaginatedResult<TEntity>> GetPaginatedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, List<string>? includes = null);
         Task<TEntity?> GetByIdAsync(Guid id, string? include = null, List<string>? includes = null);
         Task DeleteAsync(Guid id);
