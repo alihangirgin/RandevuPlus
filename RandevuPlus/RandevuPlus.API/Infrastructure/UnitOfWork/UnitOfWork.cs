@@ -19,6 +19,7 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
         private InstructorRepository _instructorRepository;
         private InstructorReviewRepository _instructorReviewRepository;
         private MessageRepository _messageRepository;
+        private NotificationRepository _notificationRepository;
         private PurchaseRepository _purchaseRepository;
         private UserRepository _userRepository;
 
@@ -35,6 +36,7 @@ namespace RandevuPlus.API.Infrastructure.UnitOfWork
         public IInstructorRepository Instructors => _instructorRepository = _instructorRepository ?? new InstructorRepository(_dbContext);
         public IInstructorReviewRepository InstructorReviews => _instructorReviewRepository = _instructorReviewRepository ?? new InstructorReviewRepository(_dbContext);
         public IMessageRepository Messages => _messageRepository = _messageRepository ?? new MessageRepository(_dbContext);
+        public INotificationRepository Notifications => _notificationRepository = _notificationRepository ?? new NotificationRepository(_dbContext);
         public IPurchaseRepository Purchases => _purchaseRepository = _purchaseRepository ?? new PurchaseRepository(_dbContext);
         public IUserRepository Users => _userRepository = _userRepository ?? new UserRepository(_dbContext);
 

@@ -12,6 +12,7 @@ namespace RandevuPlus.API.Shared.Interfaces.UnitOfWork
         IInstructorRepository Instructors { get; }
         IInstructorReviewRepository InstructorReviews { get; }
         IMessageRepository Messages { get; }
+        INotificationRepository Notifications { get; }  
         IPurchaseRepository Purchases { get; }
         IUserRepository Users { get; }
         Task BeginTransactionAsync();

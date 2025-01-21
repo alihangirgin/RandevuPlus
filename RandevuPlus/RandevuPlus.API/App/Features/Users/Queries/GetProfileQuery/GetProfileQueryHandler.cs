@@ -30,7 +30,8 @@ namespace RandevuPlus.API.App.Features.Users.Queries.GetProfileQuery
             if (user == null) return Result.Error("UserNotFound");
             var response = _mapper.Map<GetProfileQueryResponse>(user);
             var inboxCount = await _unitOfWork.Messages.CountInboxAsync(userId);
-            response = response with { Roles = _currentUserService.Roles.ToArray(), InboxCount = inboxCount};
+            var notificationCount = await _unitOfWork.Notifications.CountNotificationsAsync(userId);
+            response = response with { Roles = _currentUserService.Roles.ToArray(), InboxCount = inboxCount, NotificationCount = notificationCount };
             return Result.Success(response);
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using RandevuPlus.API.Infrastructure.Sockets;
+using RandevuPlus.API.Infrastructure.UnitOfWork;
+using RandevuPlus.API.Shared.Constants;
 using RandevuPlus.API.Shared.Domain;
 using RandevuPlus.API.Shared.Enums;
 using RandevuPlus.API.Shared.Interfaces.Services;
@@ -42,25 +44,77 @@ namespace RandevuPlus.API.Infrastructure.BackgroundServices
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                 var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
-                var endedAppointments = await unitOfWork.Appointments.GetEndedAppointmentsAsync();
-                foreach (var endedAppointment in endedAppointments)
+                if (await unitOfWork.Appointments.CheckEndedAppointmentsAsync())
                 {
-                    endedAppointment.Status = AppointmentStatus.Completed;
-                    await unitOfWork.Appointments.UpdateAsync(endedAppointment);
-                    await unitOfWork.CommitAsync();
-                    var onlineUsers = userService.GetOnlineUsers();
-                    if (onlineUsers != null && onlineUsers.Contains(endedAppointment.UserId.ToString()))
+                    var endedAppointments = await unitOfWork.Appointments.GetEndedAppointmentsAsync();
+                    foreach (var endedAppointment in endedAppointments)
                     {
-                        await _hubContext.Clients.User(endedAppointment.UserId.ToString()).SendAsync("AppointmentEnded", endedAppointment.Id);
+                        endedAppointment.Status = AppointmentStatus.Completed;
+                        await unitOfWork.Appointments.UpdateAsync(endedAppointment);
+
+                        Notification userNotification = new()
+                        {
+                            ReceiverId = endedAppointment.UserId,
+                            NotificationText = NotificationTexts.AppointmentCompleteUser(endedAppointment.Instructor.User.FullName,
+                                endedAppointment.Instructor.Title ?? string.Empty, endedAppointment.Course.Name, endedAppointment.Date, endedAppointment.SlotStartIndex, endedAppointment.SlotEndIndex)
+                        };
+                        await unitOfWork.Notifications.AddAsync(userNotification);
+                        Notification instructorNotification = new()
+                        {
+                            ReceiverId = endedAppointment.Instructor.UserId,
+                            NotificationText = NotificationTexts.AppointmentCompleteInstructor(endedAppointment.Course.Name, endedAppointment.Date, endedAppointment.SlotStartIndex, endedAppointment.SlotEndIndex)
+                        };
+                        await unitOfWork.Notifications.AddAsync(instructorNotification);
+                        await unitOfWork.CommitAsync();
+
+                        var onlineUsers = userService.GetOnlineUsers();
+                        if (onlineUsers.Contains(endedAppointment.UserId.ToString()))
+                        {
+                            await _hubContext.Clients.User(endedAppointment.UserId.ToString()).SendAsync("AppointmentEnded", endedAppointment.Id);
+                            await _hubContext.Clients.User(endedAppointment.UserId.ToString()).SendAsync("NotificationReceived");
+                        }
+                        if (onlineUsers.Contains(endedAppointment.Instructor.UserId.ToString()))
+                        {
+                            await _hubContext.Clients.User(endedAppointment.Instructor.UserId.ToString()).SendAsync("AppointmentEnded", endedAppointment.Id);
+                            await _hubContext.Clients.User(endedAppointment.Instructor.UserId.ToString()).SendAsync("NotificationReceived");
+                        }
                     }
-                    if (onlineUsers != null && onlineUsers.Contains(endedAppointment.Instructor.UserId.ToString()))
+
+                    if (await unitOfWork.Appointments.CheckApproachingAppointmentsAsync())
                     {
-                        await _hubContext.Clients.User(endedAppointment.Instructor.UserId.ToString()).SendAsync("AppointmentEnded", endedAppointment.Id);
+                        var approachingAppointments = await unitOfWork.Appointments.GetApproachingAppointmentsAsync();
+                        foreach (var approachingAppointment in approachingAppointments)
+                        {
+                            Notification userNotification = new()
+                            {
+                                ReceiverId = approachingAppointment.UserId,
+                                NotificationText = NotificationTexts.AppointmentReminderUser(approachingAppointment.Instructor.User.FullName,
+                                    approachingAppointment.Instructor.Title ?? string.Empty, approachingAppointment.Course.Name, approachingAppointment.Date, approachingAppointment.SlotStartIndex, approachingAppointment.SlotEndIndex)
+                            };
+                            await unitOfWork.Notifications.AddAsync(userNotification);
+                            Notification instructorNotification = new()
+                            {
+                                ReceiverId = approachingAppointment.Instructor.UserId,
+                                NotificationText = NotificationTexts.AppointmentReminderInstructor(approachingAppointment.Course.Name, approachingAppointment.Date, approachingAppointment.SlotStartIndex, approachingAppointment.SlotEndIndex)
+                            };
+                            await unitOfWork.Notifications.AddAsync(instructorNotification);
+                            await unitOfWork.CommitAsync();
+
+                            var onlineUsers = userService.GetOnlineUsers();
+                            if (onlineUsers.Contains(approachingAppointment.UserId.ToString()))
+                            {
+                                await _hubContext.Clients.User(approachingAppointment.UserId.ToString()).SendAsync("NotificationReceived");
+                            }
+                            if (onlineUsers.Contains(approachingAppointment.Instructor.UserId.ToString()))
+                            {
+                                await _hubContext.Clients.User(approachingAppointment.Instructor.UserId.ToString()).SendAsync("NotificationReceived");
+                            }
+                        }
                     }
                 }
-            }
 
-            await Task.Delay(1000);
+                await Task.Delay(1000);
+            }
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)

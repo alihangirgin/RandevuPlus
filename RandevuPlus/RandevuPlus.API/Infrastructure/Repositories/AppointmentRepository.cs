@@ -54,12 +54,34 @@ namespace RandevuPlus.API.Infrastructure.Repositories
 
         }
 
+        public async Task<bool> CheckEndedAppointmentsAsync()
+        {
+            var currentDate = DateTime.UtcNow.AddHours(3);
+            return await _dbSet.AnyAsync(x => x.Status == AppointmentStatus.Scheduled && currentDate >= x.Date.AddMinutes(x.SlotEndIndex * 30));
+        }
+
         public async Task<List<Appointment>> GetEndedAppointmentsAsync()
         {
             var currentDate = DateTime.UtcNow.AddHours(3);
             return await _dbSet
-                .Include(x => x.Instructor)
+                .Include(x => x.Instructor).ThenInclude(x => x.User)
+                .Include(x => x.Course)
                 .Where(x => x.Status == AppointmentStatus.Scheduled && currentDate >= x.Date.AddMinutes(x.SlotEndIndex * 30)).ToListAsync();
+        }
+
+        public async Task<bool> CheckApproachingAppointmentsAsync()
+        {
+            var currentDate = DateTime.UtcNow.AddHours(3);
+            return await _dbSet.AnyAsync(x => x.Status == AppointmentStatus.Scheduled && currentDate.AddHours(3) >= x.Date.AddMinutes(x.SlotEndIndex * 30));
+        }
+
+        public async Task<List<Appointment>> GetApproachingAppointmentsAsync()
+        {
+            var currentDate = DateTime.UtcNow.AddHours(3);
+            return await _dbSet
+                .Include(x => x.Instructor).ThenInclude(x => x.User)
+                .Include(x => x.Course)
+                .Where(x => x.Status == AppointmentStatus.Scheduled && currentDate.AddHours(3) >= x.Date.AddMinutes(x.SlotEndIndex * 30)).ToListAsync();
         }
     }
 }
